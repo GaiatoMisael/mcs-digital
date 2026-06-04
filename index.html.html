@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCS Digital — Agente de IA para WhatsApp</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#FFFFFF;
+  --bg2:#F5F4FF;
+  --white:#FFFFFF;
+  --ink:#13101F;
+  --ink2:#2E2A3D;
+  --gray:#72708A;
+  --gray2:#A8A6BE;
+  --volt:#4F46E5;
+  --volt2:#7C75FF;
+  --volt-light:#EEEEFF;
+  --volt-glow:rgba(79,70,229,.13);
+  --green:#22C55E;
+  --amber:#F59E0B;
+  --red:#EF4444;
+  --line:rgba(79,70,229,.1);
+  --shadow:0 4px 24px rgba(79,70,229,.08);
+  --shadow-lg:0 20px 60px rgba(79,70,229,.14);
+  --t:.5s cubic-bezier(.19,1,.22,1);
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--volt);color:#fff;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;transition:all .4s;}
+nav.scrolled{background:rgba(248,247,255,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);padding:14px 60px;}
+.nav-logo{display:flex;align-items:center;gap:11px;text-decoration:none;}
+.nav-logo-mark{width:36px;height:36px;background:var(--volt);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.nav-brand{font-family:'Clash Display',sans-serif;font-size:19px;font-weight:600;color:var(--ink);}
+.nav-brand span{color:var(--volt);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{font-size:14px;font-weight:500;color:var(--ink2);text-decoration:none;transition:color .3s;}
+.nav-links a:hover{color:var(--volt);}
+.nav-cta{background:var(--volt);color:#fff;border:none;border-radius:100px;padding:11px 24px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .3s;box-shadow:0 8px 24px rgba(79,70,229,.3);}
+.nav-cta:hover{background:var(--volt2);transform:translateY(-2px);}
+
+/* ══════════════════════
+   01 — HERO
+══════════════════════ */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:130px 60px 80px;text-align:center;position:relative;overflow:hidden;background:#fff;}
+.hero-bg-grad{position:absolute;top:-100px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(79,70,229,.07),transparent 65%);filter:blur(50px);pointer-events:none;}
+.hero-bg-grad2{position:absolute;bottom:-80px;left:-80px;width:450px;height:450px;background:radial-gradient(circle,rgba(124,117,255,.05),transparent 65%);filter:blur(40px);pointer-events:none;}
+.hero-bg-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(79,70,229,.08) 1.5px,transparent 1.5px);background-size:32px 32px;mask-image:radial-gradient(ellipse 80% 80% at 50% 40%,#000 20%,transparent 80%);pointer-events:none;}
+/* Logo MCS como marca d'água no hero */
+.hero-watermark{
+  display:none;
+}
+.hero>*{position:relative;z-index:1;}
+
+.hero-trust{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);border-radius:100px;padding:8px 18px;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:18px;box-shadow:var(--shadow);animation:fade-up .8s .1s both;}
+.hero-trust .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,.2);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,.2);}50%{box-shadow:0 0 0 7px rgba(34,197,94,.05);}}
+
+.hero h1{font-family:'Clash Display',sans-serif;font-size:clamp(44px,6.5vw,84px);font-weight:700;line-height:1.02;letter-spacing:-2.5px;max-width:900px;margin:0 auto 16px;animation:fade-up .8s .25s both;}
+.hero h1 em{font-family:'Plus Jakarta Sans',sans-serif;font-style:italic;color:var(--volt);font-weight:500;}
+
+.hero-result{font-size:18px;color:var(--gray);max-width:600px;margin:0 auto 16px;line-height:1.7;animation:fade-up .8s .4s both;}
+.hero-result strong{color:var(--ink);font-weight:700;}
+
+.hero-guarantee{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--gray);margin-bottom:40px;animation:fade-up .8s .5s both;}
+.hero-guarantee span{color:var(--green);font-weight:600;}
+
+.hero-cta-group{display:flex;flex-direction:column;align-items:center;gap:14px;animation:fade-up .8s .6s both;}
+.btn-primary{background:var(--volt);color:#fff;border:none;border-radius:100px;padding:18px 40px;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .3s;display:inline-flex;align-items:center;gap:10px;box-shadow:0 16px 50px rgba(79,70,229,.35);}
+.btn-primary:hover{background:var(--volt2);transform:translateY(-3px);box-shadow:0 24px 60px rgba(79,70,229,.45);}
+.cta-note{font-size:13px;color:var(--gray2);}
+
+/* Social proof rápido */
+.hero-proof{display:flex;align-items:center;justify-content:center;gap:32px;margin-top:64px;padding-top:48px;border-top:1px solid var(--line);animation:fade-up .8s .8s both;}
+.proof-item{text-align:center;}
+.proof-num{font-family:'Clash Display',sans-serif;font-size:36px;font-weight:700;color:var(--ink);line-height:1;}
+.proof-num span{color:var(--volt);}
+.proof-label{font-size:12px;color:var(--gray);margin-top:6px;}
+.proof-div{width:1px;height:48px;background:var(--line);}
+
+@keyframes fade-up{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+
+/* ══════════════════════
+   02 — PROBLEMAS
+══════════════════════ */
+.section-wrap{padding:110px 60px;max-width:1260px;margin:0 auto;}
+.section-tag{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--volt);margin-bottom:16px;}
+.section-tag::before{content:'';width:24px;height:2px;background:var(--volt);border-radius:2px;}
+.section-title{font-family:'Clash Display',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:700;line-height:1.06;letter-spacing:-1.2px;margin-bottom:16px;}
+.section-title em{font-style:italic;color:var(--volt);font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;}
+.section-sub{font-size:17px;color:var(--gray);max-width:560px;line-height:1.7;margin-bottom:56px;}
+
+.prob-bg{background:var(--white);}
+.prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.prob-card{background:var(--bg);border:1px solid rgba(239,68,68,.1);border-radius:20px;padding:32px;transition:.4s;}
+.prob-card:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(239,68,68,.08);}
+.prob-icon{font-size:38px;margin-bottom:16px;}
+.prob-stat{font-family:'Clash Display',sans-serif;font-size:32px;font-weight:700;color:var(--red);line-height:1;margin-bottom:8px;}
+.prob-title{font-size:17px;font-weight:700;margin-bottom:10px;}
+.prob-desc{font-size:14px;color:var(--gray);line-height:1.7;}
+
+/* ══════════════════════
+   03 — SOLUÇÃO
+══════════════════════ */
+.sol-bg{background:var(--bg);}
+.sol-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:70px;align-items:center;}
+.sol-benefits{display:flex;flex-direction:column;gap:28px;}
+.sol-benefit{display:flex;gap:18px;align-items:flex-start;padding:22px;border-radius:18px;transition:.4s;cursor:default;}
+.sol-benefit:hover{background:var(--volt-light);}
+.sol-benefit-icon{width:52px;height:52px;border-radius:14px;background:var(--volt-light);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;transition:.4s;}
+.sol-benefit:hover .sol-benefit-icon{background:var(--volt);}
+.sol-benefit-title{font-size:17px;font-weight:700;margin-bottom:6px;}
+.sol-benefit-desc{font-size:14px;color:var(--gray);line-height:1.6;}
+.sol-mid-cta{margin-top:8px;}
+.btn-outline-volt{border:2px solid var(--volt);color:var(--volt);background:transparent;border-radius:100px;padding:14px 32px;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:.3s;display:inline-flex;align-items:center;gap:8px;}
+.btn-outline-volt:hover{background:var(--volt);color:#fff;}
+
+/* Dashboard */
+.dash-wrap{background:var(--ink);border-radius:24px;overflow:hidden;box-shadow:var(--shadow-lg);}
+.dash-top{background:rgba(255,255,255,.05);padding:14px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06);}
+.dash-dots{display:flex;gap:6px;}
+.dash-dot{width:10px;height:10px;border-radius:50%;}
+.dash-header-title{font-size:12px;color:rgba(255,255,255,.4);margin-left:6px;}
+.dash-body{padding:18px;}
+.dash-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.kpi{background:rgba(255,255,255,.05);border-radius:12px;padding:14px;}
+.kpi-label{font-size:10px;color:rgba(255,255,255,.35);margin-bottom:5px;}
+.kpi-val{font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;color:#fff;}
+.kpi-sub{font-size:10px;margin-top:3px;}
+.up{color:var(--green);}
+.chart-box{background:rgba(255,255,255,.04);border-radius:12px;padding:14px;margin-bottom:12px;}
+.chart-label{font-size:10px;color:rgba(255,255,255,.35);margin-bottom:10px;}
+.bars{display:flex;align-items:flex-end;gap:6px;height:70px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bar{width:100%;background:linear-gradient(180deg,var(--volt2),var(--volt));border-radius:4px 4px 0 0;transition:.4s;}
+.bar:hover{opacity:.8;}
+.bar-lbl{font-size:9px;color:rgba(255,255,255,.3);}
+.live-chats{display:flex;flex-direction:column;gap:8px;}
+.lc-item{background:rgba(255,255,255,.05);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;}
+.lc-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.lc-info{flex:1;}
+.lc-name{font-size:12px;color:rgba(255,255,255,.9);font-weight:600;}
+.lc-msg{font-size:10px;color:rgba(255,255,255,.4);}
+.lc-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;}
+.bot-badge{background:rgba(79,70,229,.3);color:#9B98FF;}
+.human-badge{background:rgba(34,197,94,.2);color:var(--green);}
+
+/* ══════════════════════
+   04 — PROVA SOCIAL
+══════════════════════ */
+.proof-bg{background:linear-gradient(180deg,var(--bg),var(--white));}
+.depo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.depo-card{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:28px;transition:.4s;box-shadow:var(--shadow);}
+.depo-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);}
+.depo-stars{color:var(--amber);font-size:16px;margin-bottom:14px;letter-spacing:2px;}
+.depo-text{font-size:15px;color:var(--ink2);line-height:1.7;font-style:italic;margin-bottom:20px;}
+.depo-text::before{content:'"';font-size:40px;color:var(--volt-light);font-family:'Clash Display',sans-serif;line-height:0;vertical-align:-14px;margin-right:4px;}
+.depo-author{display:flex;align-items:center;gap:12px;}
+.depo-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.depo-name{font-size:14px;font-weight:700;}
+.depo-role{font-size:12px;color:var(--gray);}
+.depo-result{margin-top:16px;background:var(--volt-light);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--volt);font-weight:600;}
+
+/* ══════════════════════
+   05 — MODO HUMANO
+══════════════════════ */
+.modo-bg{background:linear-gradient(135deg,var(--ink) 0%,#1E1A35 100%);position:relative;overflow:hidden;}
+.modo-bg::before{content:'';position:absolute;top:-50%;right:-20%;width:700px;height:700px;background:radial-gradient(circle,rgba(79,70,229,.12),transparent 65%);pointer-events:none;}
+.modo-inner{max-width:1260px;margin:0 auto;padding:110px 60px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.modo-tag{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#9B98FF;margin-bottom:16px;}
+.modo-tag::before{content:'';width:24px;height:2px;background:#9B98FF;border-radius:2px;}
+.modo-title{font-family:'Clash Display',sans-serif;font-size:clamp(32px,4vw,50px);font-weight:700;color:#fff;letter-spacing:-1.2px;line-height:1.06;margin-bottom:16px;}
+.modo-title em{font-style:italic;color:#9B98FF;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;}
+.modo-sub{font-size:16px;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:36px;}
+.modo-cmds{display:flex;flex-direction:column;gap:14px;}
+.modo-cmd{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:16px;}
+.cmd-code{background:var(--volt);border-radius:8px;padding:8px 16px;font-family:monospace;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
+.cmd-desc{font-size:14px;color:rgba(255,255,255,.75);}
+/* Chat do modo humano */
+.modo-chat-wrap{background:#1A1A2A;border-radius:22px;padding:20px;box-shadow:0 40px 100px rgba(0,0,0,.5);}
+.mc-bubble{max-width:85%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;word-break:break-word;margin-bottom:8px;}
+.mc-recv{background:rgba(255,255,255,.1);color:rgba(255,255,255,.9);margin-right:auto;border-top-left-radius:4px;}
+.mc-sent{background:var(--volt);color:#fff;margin-left:auto;border-top-right-radius:4px;}
+.mc-sys{background:rgba(79,70,229,.2);color:#9B98FF;font-size:11px;padding:6px 14px;border-radius:10px;text-align:center;margin:8px auto;}
+
+/* ══════════════════════
+   06 — COMO FUNCIONA
+══════════════════════ */
+.proc-bg{background:var(--white);}
+.proc-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;max-width:1000px;margin:0 auto;}
+.proc-steps::before{content:'';position:absolute;top:32px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--volt),transparent);opacity:.25;}
+.proc-step{text-align:center;padding:0 20px;}
+.proc-num{width:64px;height:64px;border-radius:20px;background:var(--white);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Clash Display',sans-serif;font-size:20px;font-weight:700;color:var(--volt);margin:0 auto 20px;position:relative;z-index:1;box-shadow:var(--shadow);transition:.4s;}
+.proc-step:hover .proc-num{background:var(--volt);color:#fff;transform:translateY(-5px);}
+.proc-name{font-size:15px;font-weight:700;margin-bottom:6px;}
+.proc-desc{font-size:13px;color:var(--gray);line-height:1.6;}
+
+/* ══════════════════════
+   07 — PLANOS
+══════════════════════ */
+.planos-bg{background:var(--bg2);}
+.planos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:start;}
+.plano{background:var(--white);border:1px solid var(--line);border-radius:24px;padding:36px;position:relative;transition:.4s;}
+.plano:hover{transform:translateY(-7px);box-shadow:var(--shadow-lg);}
+.plano.dest{background:linear-gradient(165deg,var(--ink),#1E1A35);border:none;transform:scale(1.04);box-shadow:var(--shadow-lg);}
+.plano.dest:hover{transform:scale(1.04) translateY(-7px);}
+.plano-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#F59E0B,#FBBF24);color:var(--ink);font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:6px 18px;border-radius:100px;white-space:nowrap;box-shadow:0 8px 24px rgba(245,158,11,.35);}
+.plano-icon{font-size:28px;margin-bottom:16px;}
+.plano-nome{font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;margin-bottom:6px;}
+.plano.dest .plano-nome{color:#fff;}
+.plano-setup{font-size:13px;color:var(--gray);margin-bottom:16px;}
+.plano.dest .plano-setup{color:rgba(255,255,255,.45);}
+.plano-preco{font-family:'Clash Display',sans-serif;font-size:50px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-2px;margin-bottom:6px;}
+.plano-preco .rs{font-size:22px;color:var(--gray);vertical-align:super;}
+.plano-preco .mes{font-size:16px;font-weight:400;color:var(--gray);letter-spacing:0;}
+.plano.dest .plano-preco{color:#fff;}
+.plano.dest .plano-preco .rs,.plano.dest .plano-preco .mes{color:rgba(255,255,255,.4);}
+.plano-div{height:1px;background:var(--line);margin:22px 0;}
+.plano.dest .plano-div{background:rgba(255,255,255,.1);}
+.plano-items{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.plano-items li{font-size:14px;color:var(--ink2);display:flex;gap:10px;align-items:flex-start;line-height:1.4;}
+.plano.dest .plano-items li{color:rgba(255,255,255,.85);}
+.plano-items li.no{color:var(--gray2);}
+.chk{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.chk-yes{background:var(--volt-light);color:var(--volt);}
+.plano.dest .chk-yes{background:rgba(79,70,229,.25);color:#9B98FF;}
+.chk-no{background:var(--bg2);color:var(--gray2);}
+.plano-btn{display:block;text-align:center;margin-top:26px;padding:15px;border-radius:100px;font-size:14px;font-weight:700;text-decoration:none;cursor:pointer;transition:.3s;font-family:'Plus Jakarta Sans',sans-serif;}
+.plano-btn-outline{border:1.5px solid var(--line);color:var(--ink);}
+.plano-btn-outline:hover{border-color:var(--volt);color:var(--volt);background:var(--volt-light);}
+.plano-btn-ink{background:var(--ink);color:#fff;}
+.plano-btn-ink:hover{background:var(--volt);}
+.plano-btn-white{background:#fff;color:var(--ink);}
+.plano-btn-white:hover{background:var(--volt);color:#fff;}
+.garantia-faixa{max-width:1260px;margin:36px auto 0;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:16px;padding:22px 32px;display:flex;align-items:center;gap:16px;}
+.garantia-faixa span{font-size:32px;}
+.garantia-faixa h4{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.garantia-faixa p{font-size:13px;color:var(--gray);}
+
+/* ══════════════════════
+   08 — CTA FINAL
+══════════════════════ */
+.cta-bg{background:var(--bg);}
+.cta-box{background:linear-gradient(135deg,var(--ink),#1E1A35);border-radius:32px;padding:80px 60px;text-align:center;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);}
+.cta-box::before{content:'';position:absolute;top:-50%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,var(--volt-glow),transparent 65%);pointer-events:none;}
+.cta-box::after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(79,70,229,.07) 1.5px,transparent 1.5px);background-size:28px 28px;pointer-events:none;}
+.cta-box>*{position:relative;z-index:1;}
+.cta-box .section-tag{color:#9B98FF;justify-content:center;}
+.cta-box .section-tag::before{background:#9B98FF;}
+.cta-box h2{font-family:'Clash Display',sans-serif;font-size:clamp(32px,4.5vw,54px);font-weight:700;color:#fff;letter-spacing:-1.2px;max-width:640px;margin:0 auto 14px;line-height:1.05;}
+.cta-box h2 em{color:#9B98FF;font-style:italic;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;}
+.cta-urgency{display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:100px;padding:7px 18px;font-size:13px;font-weight:600;color:var(--amber);margin-bottom:28px;}
+/* Formulário simples */
+.cta-form{max-width:420px;margin:0 auto 18px;display:flex;flex-direction:column;gap:12px;}
+.cta-input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:15px 20px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;color:#fff;outline:none;transition:.3s;text-align:center;}
+.cta-input::placeholder{color:rgba(255,255,255,.4);}
+.cta-input:focus{border-color:var(--volt2);background:rgba(255,255,255,.12);}
+.btn-wpp{background:#25D366;color:#fff;border:none;border-radius:100px;padding:18px 40px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:.3s;box-shadow:0 16px 50px rgba(37,211,102,.3);width:100%;}
+.btn-wpp:hover{background:#1da851;transform:translateY(-2px);}
+.cta-note{font-size:12px;color:rgba(255,255,255,.35);text-align:center;}
+
+/* FOOTER */
+footer{background:var(--ink);padding:52px 60px;}
+.footer-inner{max-width:1260px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
+.footer-brand{font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;color:#fff;}
+.footer-brand span{color:var(--volt2);}
+.footer-links{display:flex;gap:28px;}
+.footer-links a{font-size:14px;color:rgba(255,255,255,.4);text-decoration:none;transition:.3s;}
+.footer-links a:hover{color:var(--volt2);}
+.footer-copy{max-width:1260px;margin:28px auto 0;padding-top:22px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,.22);}
+
+/* PÁGINAS INTERNAS */
+.servico-page{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;overflow-y:auto;animation:page-in .5s ease;}
+.servico-page.ativa{display:block;}
+@keyframes page-in{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
+.sp-header{padding:20px 56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(248,247,255,.92);backdrop-filter:blur(20px);z-index:10;}
+.sp-back{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;transition:.3s;}
+.sp-back:hover{color:var(--volt);}
+.sp-brand{font-family:'Clash Display',sans-serif;font-size:18px;font-weight:600;}
+.sp-brand span{color:var(--volt);}
+.sp-hero{padding:80px 56px 60px;max-width:840px;margin:0 auto;text-align:center;}
+.sp-tag{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);border-radius:100px;padding:7px 16px;font-size:12px;font-weight:600;color:var(--volt);margin-bottom:22px;}
+.sp-icon-wrap{width:88px;height:88px;border-radius:24px;background:var(--volt-light);display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 22px;animation:icon-float 3s ease-in-out infinite;}
+@keyframes icon-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+.sp-title{font-family:'Clash Display',sans-serif;font-size:clamp(36px,5vw,62px);font-weight:700;line-height:1.04;letter-spacing:-1.5px;margin-bottom:18px;}
+.sp-title .volt{color:var(--volt);}
+.sp-subtitle{font-size:17px;color:var(--gray);max-width:560px;margin:0 auto 48px;line-height:1.7;}
+.sp-stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--white);border:1px solid var(--line);border-radius:20px;overflow:hidden;max-width:700px;margin:0 auto 80px;box-shadow:var(--shadow);}
+.sp-stat{padding:26px 20px;text-align:center;border-right:1px solid var(--line);}
+.sp-stat:last-child{border-right:none;}
+.sp-stat-num{font-family:'Clash Display',sans-serif;font-size:34px;font-weight:700;color:var(--volt);line-height:1;margin-bottom:8px;letter-spacing:-1px;}
+.sp-stat-label{font-size:12px;color:var(--gray);}
+.sp-body{padding:0 56px 80px;max-width:1100px;margin:0 auto;}
+.sp-sub-tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--volt);margin-bottom:14px;}
+.sp-sub-tag::before{content:'';width:22px;height:2px;background:var(--volt);border-radius:2px;}
+.sp-sub-title{font-family:'Clash Display',sans-serif;font-size:clamp(28px,3.5vw,42px);font-weight:700;letter-spacing:-1px;margin-bottom:40px;line-height:1.08;}
+.vant-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:70px;}
+.vant-card{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:28px 24px;transition:.4s;box-shadow:var(--shadow);}
+.vant-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);}
+.vant-icon{width:52px;height:52px;border-radius:14px;background:var(--volt-light);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;transition:.4s;}
+.vant-card:hover .vant-icon{background:var(--volt);}
+.vant-title{font-size:16px;font-weight:700;margin-bottom:8px;}
+.vant-desc{font-size:13px;color:var(--gray);line-height:1.7;}
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.comp-card{border-radius:20px;padding:34px;}
+.comp-antes{background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.14);}
+.comp-depois{background:linear-gradient(165deg,var(--ink),#1E1A35);box-shadow:var(--shadow-lg);}
+.comp-label{font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-bottom:20px;}
+.comp-antes .comp-label{color:var(--red);}
+.comp-depois .comp-label{color:#9B98FF;}
+.comp-list{list-style:none;display:flex;flex-direction:column;gap:13px;}
+.comp-list li{font-size:14px;display:flex;gap:12px;align-items:flex-start;line-height:1.5;}
+.comp-antes .comp-list li{color:var(--ink2);}
+.comp-depois .comp-list li{color:rgba(255,255,255,.82);}
+.cico{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.comp-antes .cico{background:rgba(239,68,68,.12);color:var(--red);}
+.comp-depois .cico{background:rgba(79,70,229,.3);color:#9B98FF;}
+.sp-cta{padding:70px 56px;text-align:center;background:var(--bg2);border-top:1px solid var(--line);}
+.sp-cta h3{font-family:'Clash Display',sans-serif;font-size:clamp(26px,3vw,38px);font-weight:700;margin-bottom:10px;letter-spacing:-.8px;}
+.sp-cta p{font-size:15px;color:var(--gray);margin-bottom:28px;}
+.btn-wpp-inline{background:#25D366;color:#fff;border:none;border-radius:100px;padding:16px 36px;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:10px;transition:.3s;box-shadow:0 12px 40px rgba(37,211,102,.25);}
+.btn-wpp-inline:hover{background:#1da851;transform:translateY(-2px);}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s,transform .9s cubic-bezier(.19,1,.22,1);}
+.reveal.vis{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  nav,nav.scrolled{padding:14px 24px;}
+  .nav-links{display:none;}
+  .hero{padding:120px 24px 80px;}
+  .hero-proof{flex-wrap:wrap;gap:24px;}
+  .proof-div{display:none;}
+  .section-wrap{padding:80px 24px;}
+  .prob-grid,.depo-grid,.vant-grid,.comp-grid,.planos-grid{grid-template-columns:1fr;}
+  .sol-grid,.modo-inner{grid-template-columns:1fr;}
+  .proc-steps{grid-template-columns:repeat(2,1fr);gap:20px;}
+  .proc-steps::before{display:none;}
+  .cta-box{padding:60px 24px;}
+  .plano.dest{transform:scale(1);}
+  footer,.footer-inner,.footer-copy{flex-direction:column;gap:16px;text-align:center;}
+  .footer-links{justify-content:center;flex-wrap:wrap;}
+  .sp-header{padding:14px 24px;}
+  .sp-hero{padding:60px 24px 40px;}
+  .sp-body,.sp-cta{padding-left:24px;padding-right:24px;}
+  .sp-stats{grid-template-columns:1fr;}
+  .sp-stat{border-right:none;border-bottom:1px solid var(--line);}
+}
+
+/* ── DECORAÇÕES DE FUNDO ── */
+.deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+
+.deco-ring{position:absolute;border-radius:50%;border:1px solid rgba(79,70,229,.07);animation:ring-spin linear infinite;}
+.deco-ring::after{content:'';position:absolute;inset:18%;border-radius:50%;border:1px dashed rgba(79,70,229,.05);animation:ring-spin 12s linear infinite reverse;}
+.dr1{width:620px;height:620px;top:-180px;right:-140px;animation-duration:50s;}
+.dr2{width:380px;height:380px;bottom:5%;left:-100px;animation-duration:35s;}
+.dr3{width:200px;height:200px;top:38%;right:6%;animation-duration:25s;}
+@keyframes ring-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+.deco-dots{position:absolute;inset:0;
+  background-image:radial-gradient(rgba(79,70,229,.09) 1.2px,transparent 1.2px);
+  background-size:36px 36px;
+  mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,#000 20%,transparent 75%);}
+
+.deco-lines{position:absolute;inset:0;overflow:hidden;}
+.deco-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(79,70,229,.1),transparent);animation:line-drift linear infinite;}
+.dl1{width:45%;top:18%;left:-45%;animation-duration:10s;animation-delay:0s;}
+.dl2{width:60%;top:42%;left:-60%;animation-duration:14s;animation-delay:2.5s;}
+.dl3{width:35%;top:68%;left:-35%;animation-duration:11s;animation-delay:5s;}
+.dl4{width:50%;top:84%;left:-50%;animation-duration:13s;animation-delay:1.5s;}
+@keyframes line-drift{from{left:-65%;}to{left:110%;}}
+
+.deco-hex{position:absolute;opacity:.055;animation:hex-float ease-in-out infinite;}
+.deco-hex svg{fill:none;stroke:rgba(79,70,229,.8);stroke-width:1.2;}
+.dh1{width:110px;top:12%;left:4%;animation-duration:7s;}
+.dh2{width:72px;top:52%;right:5%;animation-duration:9s;animation-delay:1.5s;}
+.dh3{width:55px;top:76%;left:12%;animation-duration:6.5s;animation-delay:3s;}
+.dh4{width:90px;top:28%;right:13%;animation-duration:8s;animation-delay:2s;}
+@keyframes hex-float{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-16px) rotate(8deg);}}
+
+.deco-particles{position:absolute;inset:0;}
+.dp{position:absolute;border-radius:50%;background:var(--volt);animation:dp-float ease-in-out infinite;}
+.dp1{width:5px;height:5px;top:18%;left:18%;opacity:.18;animation-duration:6s;}
+.dp2{width:7px;height:7px;top:58%;left:78%;opacity:.14;animation-duration:8s;animation-delay:1s;}
+.dp3{width:4px;height:4px;top:78%;left:38%;opacity:.16;animation-duration:7.5s;animation-delay:2s;}
+.dp4{width:6px;height:6px;top:32%;left:58%;opacity:.13;animation-duration:9s;animation-delay:3s;}
+.dp5{width:4px;height:4px;top:8%;left:68%;opacity:.17;animation-duration:5.5s;animation-delay:1.5s;}
+.dp6{width:5px;height:5px;top:65%;left:8%;opacity:.12;animation-duration:10s;animation-delay:.5s;}
+@keyframes dp-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-22px);}}
+
+.deco-circuit{position:absolute;opacity:.045;pointer-events:none;}
+.deco-circuit svg{stroke:var(--volt);fill:none;stroke-width:1;}
+.dc1{top:0;right:0;width:280px;}
+.dc2{bottom:0;left:0;width:220px;transform:rotate(180deg);}
+
+/* garante conteúdo acima */
+nav,section,footer,.prob-bg,.sol-bg,.proof-bg,.modo-bg,.proc-bg,.planos-bg,.cta-bg,.logos-strip{position:relative;z-index:2;}
+
+.hero-logo-mark{
+  width:90px;
+  height:auto;
+  margin-bottom:20px;
+  animation:fade-up .8s .05s both;
+}
+.hero-logo-mark svg{width:100%;height:auto;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="deco">
+  <div class="deco-dots"></div>
+  <div class="deco-ring dr1"></div>
+  <div class="deco-ring dr2"></div>
+  <div class="deco-ring dr3"></div>
+  <div class="deco-lines">
+    <div class="deco-line dl1"></div>
+    <div class="deco-line dl2"></div>
+    <div class="deco-line dl3"></div>
+    <div class="deco-line dl4"></div>
+  </div>
+  <div class="deco-hex dh1"><svg viewBox="0 0 100 116"><polygon points="50,5 95,28 95,88 50,111 5,88 5,28"/></svg></div>
+  <div class="deco-hex dh2"><svg viewBox="0 0 100 116"><polygon points="50,5 95,28 95,88 50,111 5,88 5,28"/></svg></div>
+  <div class="deco-hex dh3"><svg viewBox="0 0 100 116"><polygon points="50,5 95,28 95,88 50,111 5,88 5,28"/></svg></div>
+  <div class="deco-hex dh4"><svg viewBox="0 0 100 116"><polygon points="50,5 95,28 95,88 50,111 5,88 5,28"/></svg></div>
+  <div class="deco-particles">
+    <div class="dp dp1"></div><div class="dp dp2"></div><div class="dp dp3"></div>
+    <div class="dp dp4"></div><div class="dp dp5"></div><div class="dp dp6"></div>
+  </div>
+  <div class="deco-circuit dc1"><svg viewBox="0 0 280 280">
+    <path d="M280,0 L180,0 L180,50 L130,50 L130,110 L230,110 L230,160 L280,160"/>
+    <path d="M280,70 L220,70 L220,120 L160,120 L160,190 L280,190"/>
+    <path d="M260,0 L260,40 L200,40 L200,90 L255,90"/>
+    <circle cx="180" cy="50" r="3" fill="var(--volt)" opacity=".4"/>
+    <circle cx="130" cy="110" r="3" fill="var(--volt)" opacity=".4"/>
+    <circle cx="230" cy="160" r="3" fill="var(--volt)" opacity=".4"/>
+  </svg></div>
+  <div class="deco-circuit dc2"><svg viewBox="0 0 220 220">
+    <path d="M0,0 L90,0 L90,55 L140,55 L140,115 L70,115 L70,170 L0,170"/>
+    <path d="M0,36 L60,36 L60,95 L120,95 L120,150 L0,150"/>
+    <circle cx="90" cy="55" r="3" fill="var(--volt)" opacity=".4"/>
+    <circle cx="140" cy="115" r="3" fill="var(--volt)" opacity=".4"/>
+  </svg></div>
+</div>
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="1" y="2" width="4" height="18" rx="1" fill="white"/>
+        <rect x="17" y="2" width="4" height="18" rx="1" fill="white"/>
+        <path d="M5 2 L11 14 L17 2" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="11" cy="17" r="2.5" fill="#A5B4FC"/>
+      </svg>
+    </div>
+    <span class="nav-brand">MCS<span>digital</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#problemas">Problemas</a></li>
+    <li><a href="#solucao">Solução</a></li>
+    <li><a href="#planos">Planos</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <a href="https://wa.me/552176569360?text=Quero%20ver%20o%20Agente%20de%20IA" class="nav-cta" target="_blank">Ver demonstração →</a>
+</nav>
+
+<!-- ══════ 01 — HERO ══════ -->
+<section class="hero">
+  <div class="hero-bg-grad"></div>
+  <div class="hero-bg-grad2"></div>
+  <div class="hero-bg-dots"></div>
+
+  <!-- Logo MCS visível no hero -->
+  <div class="hero-logo-mark">
+    <svg viewBox="0 0 120 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="4" width="22" height="95" rx="4" fill="#4F46E5"/>
+      <rect x="94" y="4" width="22" height="95" rx="4" fill="#4F46E5"/>
+      <polygon points="26,4 48,4 60,72 52,72" fill="#4F46E5"/>
+      <polygon points="94,4 72,4 60,72 68,72" fill="#4F46E5"/>
+      <circle cx="60" cy="100" r="14" fill="#4F46E5"/>
+    </svg>
+  </div>
+
+  <div class="hero-trust"><span class="dot"></span> +150 empresas já automatizaram com a MCS Digital</div>
+
+  <h1>WhatsApp que <em>vende sozinho.</em></h1>
+
+  <p class="hero-result">Responda <strong>3x mais rápido</strong> e converta <strong>40% mais leads</strong> — sem contratar ninguém.</p>
+
+  <div class="hero-guarantee">🛡️ <span>7 dias de garantia</span> &nbsp;·&nbsp; ⚡ Entrega em 48h &nbsp;·&nbsp; 🔒 Sem fidelidade</div>
+
+  <div class="hero-cta-group">
+    <a href="https://wa.me/552176569360?text=Quero%20ver%20o%20Agente%20de%20IA%20funcionando" class="btn-primary" target="_blank">
+      📱 Ver o bot ao vivo — é grátis
+    </a>
+    <span class="cta-note">Sem compromisso. Atendemos agora mesmo.</span>
+  </div>
+
+  <div class="hero-proof">
+    <div class="proof-item"><div class="proof-num">+<span>150</span></div><div class="proof-label">Empresas atendidas</div></div>
+    <div class="proof-div"></div>
+    <div class="proof-item"><div class="proof-num"><span>24</span>h</div><div class="proof-label">Bot ativo por dia</div></div>
+    <div class="proof-div"></div>
+    <div class="proof-item"><div class="proof-num"><span>40</span>%</div><div class="proof-label">Mais conversão de leads</div></div>
+    <div class="proof-div"></div>
+    <div class="proof-item"><div class="proof-num"><span>7</span></div><div class="proof-label">Dias de garantia</div></div>
+  </div>
+</section>
+
+<!-- ══════ 02 — PROBLEMAS ══════ -->
+<div class="prob-bg" id="problemas">
+  <div class="section-wrap">
+    <div class="section-tag">O problema</div>
+    <h2 class="section-title reveal">Seu negócio está <em>perdendo dinheiro</em> todo dia sem perceber.</h2>
+    <p class="section-sub reveal">Sem automação, você trabalha mais e ganha menos. Esses são os números que a maioria dos donos ignora.</p>
+    <div class="prob-grid">
+      <div class="prob-card reveal">
+        <div class="prob-icon">😴</div>
+        <div class="prob-stat">67%</div>
+        <div class="prob-title">Das mensagens são ignoradas fora do horário</div>
+        <div class="prob-desc">Clientes que não recebem resposta em até 5 minutos vão para o concorrente — e raramente voltam.</div>
+      </div>
+      <div class="prob-card reveal">
+        <div class="prob-icon">🔄</div>
+        <div class="prob-stat">3h</div>
+        <div class="prob-title">Por dia respondendo sempre as mesmas perguntas</div>
+        <div class="prob-desc">"Qual o preço?", "Vocês entregam?", "Tem disponível?" — tempo que poderia ser usado para vender.</div>
+      </div>
+      <div class="prob-card reveal">
+        <div class="prob-icon">💸</div>
+        <div class="prob-stat">80%</div>
+        <div class="prob-title">Dos leads sem follow-up nunca viram clientes</div>
+        <div class="prob-desc">Sem acompanhamento automático, a maioria dos interessados esfria e fecha com a concorrência.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 03 — SOLUÇÃO ══════ -->
+<div class="sol-bg" id="solucao">
+  <div class="section-wrap">
+    <div class="sol-grid">
+      <!-- Dashboard -->
+      <div class="dash-wrap reveal">
+        <div class="dash-top">
+          <div class="dash-dots">
+            <div class="dash-dot" style="background:#FF5F56"></div>
+            <div class="dash-dot" style="background:#FFBD2E"></div>
+            <div class="dash-dot" style="background:#27C93F"></div>
+          </div>
+          <span class="dash-header-title">MCS Digital — Painel ao vivo</span>
+        </div>
+        <div class="dash-body">
+          <div class="dash-kpis">
+            <div class="kpi"><div class="kpi-label">Leads hoje</div><div class="kpi-val">28</div><div class="kpi-sub up">↑ +14%</div></div>
+            <div class="kpi"><div class="kpi-label">Atendidos</div><div class="kpi-val">143</div><div class="kpi-sub up">↑ 24h ativo</div></div>
+            <div class="kpi"><div class="kpi-label">Conversão</div><div class="kpi-val">38%</div><div class="kpi-sub up">↑ acima média</div></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-label">Leads por dia — últimos 7 dias</div>
+            <div class="bars">
+              <div class="bar-col"><div class="bar" style="height:40%"></div><div class="bar-lbl">Seg</div></div>
+              <div class="bar-col"><div class="bar" style="height:65%"></div><div class="bar-lbl">Ter</div></div>
+              <div class="bar-col"><div class="bar" style="height:55%"></div><div class="bar-lbl">Qua</div></div>
+              <div class="bar-col"><div class="bar" style="height:80%"></div><div class="bar-lbl">Qui</div></div>
+              <div class="bar-col"><div class="bar" style="height:70%"></div><div class="bar-lbl">Sex</div></div>
+              <div class="bar-col"><div class="bar" style="height:92%"></div><div class="bar-lbl">Sáb</div></div>
+              <div class="bar-col"><div class="bar" style="height:75%;opacity:.4"></div><div class="bar-lbl">Dom</div></div>
+            </div>
+          </div>
+          <div class="live-chats">
+            <div class="lc-item"><div class="lc-av" style="background:rgba(79,70,229,.15)">👩</div><div class="lc-info"><div class="lc-name">Ana Silva</div><div class="lc-msg">Quero saber mais sobre os planos...</div></div><span class="lc-badge bot-badge">🤖 Bot</span></div>
+            <div class="lc-item"><div class="lc-av" style="background:rgba(34,197,94,.1)">👨</div><div class="lc-info"><div class="lc-name">Carlos Mendes</div><div class="lc-msg">Qual o prazo de entrega?</div></div><span class="lc-badge bot-badge">🤖 Bot</span></div>
+            <div class="lc-item"><div class="lc-av" style="background:rgba(245,158,11,.1)">👩‍💼</div><div class="lc-info"><div class="lc-name">Fernanda Rocha</div><div class="lc-msg">Fechando agora! 🎉</div></div><span class="lc-badge human-badge">✋ Humano</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Benefícios -->
+      <div>
+        <div class="section-tag">A solução</div>
+        <h2 class="section-title reveal">Controle total. Resultado <em>em dias,</em> não meses.</h2>
+        <div class="sol-benefits">
+          <div class="sol-benefit reveal">
+            <div class="sol-benefit-icon">🤖</div>
+            <div>
+              <div class="sol-benefit-title">IA treinada para o seu negócio</div>
+              <div class="sol-benefit-desc">Conhece seus produtos, preços e processos. Responde como um vendedor experiente, 24 horas por dia.</div>
+            </div>
+          </div>
+          <div class="sol-benefit reveal">
+            <div class="sol-benefit-icon">🎯</div>
+            <div>
+              <div class="sol-benefit-title">Qualifica e captura leads sozinha</div>
+              <div class="sol-benefit-desc">Identifica interesse real, coleta dados e te notifica. Você só entra quando o lead está pronto para fechar.</div>
+            </div>
+          </div>
+          <div class="sol-benefit reveal">
+            <div class="sol-benefit-icon">📊</div>
+            <div>
+              <div class="sol-benefit-title">Painel com dados em tempo real</div>
+              <div class="sol-benefit-desc">Veja atendimentos, leads e conversões ao vivo. Decisões baseadas em dados, não em achismo.</div>
+            </div>
+          </div>
+        </div>
+        <div class="sol-mid-cta" style="margin-top:32px;">
+          <a href="https://wa.me/552176569360?text=Quero%20ver%20uma%20demonstracao" class="btn-outline-volt" target="_blank">Ver demonstração ao vivo →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 04 — PROVA SOCIAL ══════ -->
+<div class="proof-bg">
+  <div class="section-wrap">
+    <div class="section-tag">Resultados reais</div>
+    <h2 class="section-title reveal">O que nossos clientes <em>estão dizendo.</em></h2>
+    <p class="section-sub reveal">Empresas reais, resultados reais. Veja como o Agente de IA transformou o atendimento delas.</p>
+    <div class="depo-grid">
+      <div class="depo-card reveal">
+        <div class="depo-stars">★★★★★</div>
+        <div class="depo-text">Em 2 semanas o bot já tinha capturado mais leads do que eu conseguia em um mês respondendo manualmente. Inacreditável!</div>
+        <div class="depo-author">
+          <div class="depo-avatar" style="background:rgba(79,70,229,.12)">👩‍💼</div>
+          <div><div class="depo-name">Carla Mendonça</div><div class="depo-role">Salão de Beleza — Duque de Caxias</div></div>
+        </div>
+        <div class="depo-result">+68% de leads convertidos no 1º mês</div>
+      </div>
+      <div class="depo-card reveal">
+        <div class="depo-stars">★★★★★</div>
+        <div class="depo-text">O modo humano é fantástico. O bot faz todo o trabalho chato e eu só entro para fechar. Economizo horas todo dia.</div>
+        <div class="depo-author">
+          <div class="depo-avatar" style="background:rgba(34,197,94,.1)">👨‍🍳</div>
+          <div><div class="depo-name">Roberto Alves</div><div class="depo-role">Restaurante — Caxias Shopping</div></div>
+        </div>
+        <div class="depo-result">3h por dia economizadas em atendimento</div>
+      </div>
+      <div class="depo-card reveal">
+        <div class="depo-stars">★★★★★</div>
+        <div class="depo-text">Achei que era caro no começo. Mas no segundo mês o bot tinha pago o investimento inteiro com os pedidos que trouxe.</div>
+        <div class="depo-author">
+          <div class="depo-avatar" style="background:rgba(245,158,11,.12)">👩</div>
+          <div><div class="depo-name">Patrícia Souza</div><div class="depo-role">Loja de Roupas — Nova Iguaçu</div></div>
+        </div>
+        <div class="depo-result">ROI positivo já no 2º mês</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 05 — MODO HUMANO ══════ -->
+<div class="modo-bg">
+  <div class="modo-inner">
+    <div class="modo-left">
+      <div class="modo-tag">Diferencial exclusivo</div>
+      <h2 class="modo-title">Você no controle,<br><em>sempre que precisar.</em></h2>
+      <p class="modo-sub">O Modo Humano é o que nos diferencia. Assuma qualquer conversa pelo mesmo número com um único comando — e devolva para o bot quando terminar.</p>
+      <div class="modo-cmds">
+        <div class="modo-cmd"><span class="cmd-code">!assumir</span><span class="cmd-desc">Bot para. Você assume a conversa para fechar o negócio.</span></div>
+        <div class="modo-cmd"><span class="cmd-code">!bot</span><span class="cmd-desc">Bot volta a responder automaticamente.</span></div>
+        <div class="modo-cmd"><span class="cmd-code">!leads</span><span class="cmd-desc">Lista todos os leads capturados do dia.</span></div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="modo-chat-wrap">
+        <div class="mc-bubble mc-recv">Oi! Quanto custa o plano profissional?</div>
+        <div class="mc-bubble mc-sent">Olá! 👋 O Profissional é R$397/mês com setup de R$997.<br><br>Inclui CRM, modo humano e relatório mensal!</div>
+        <div class="mc-bubble mc-recv">Vocês atendem aqui em Caxias?</div>
+        <div class="mc-bubble mc-sent">Sim! Somos de Duque de Caxias-RJ 📍<br>Posso agendar uma demonstração pra você?</div>
+        <div class="mc-bubble mc-recv">Quero sim! Mas tenho umas dúvidas...</div>
+        <div class="mc-sys">✋ Você assumiu a conversa</div>
+        <div class="mc-bubble mc-sent">Oi! Aqui é o Misael da MCS Digital.<br>Pode me perguntar o que quiser! 🚀</div>
+        <div class="mc-bubble mc-recv">Perfeito! Vamos fechar hoje mesmo! 🎉</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 06 — COMO FUNCIONA ══════ -->
+<div class="proc-bg">
+  <div class="section-wrap" style="text-align:center;">
+    <div class="section-tag">Como funciona</div>
+    <h2 class="section-title reveal" style="margin:0 auto 16px;">Bot funcionando em <em>até 48h após o fechamento.</em></h2>
+    <p class="section-sub reveal" style="margin:0 auto 56px;">Processo simples, rápido e sem dor de cabeça.</p>
+    <div class="proc-steps">
+      <div class="proc-step reveal"><div class="proc-num">01</div><div class="proc-name">Briefing</div><div class="proc-desc">Entendemos seu negócio em uma conversa rápida.</div></div>
+      <div class="proc-step reveal"><div class="proc-num">02</div><div class="proc-name">Criação</div><div class="proc-desc">Bot personalizado com IA treinada para você.</div></div>
+      <div class="proc-step reveal"><div class="proc-num">03</div><div class="proc-name">Testes</div><div class="proc-desc">Validamos todos os fluxos juntos antes de ativar.</div></div>
+      <div class="proc-step reveal"><div class="proc-num">04</div><div class="proc-name">Ao vivo!</div><div class="proc-desc">Bot ativo em até 48h após o fechamento.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 07 — PLANOS ══════ -->
+<div class="planos-bg" id="planos">
+  <div class="section-wrap">
+    <div class="section-tag">Investimento</div>
+    <h2 class="section-title reveal">Plano que cabe no seu bolso,<br>resultado que <em>paga sozinho.</em></h2>
+    <p class="section-sub reveal">Todos incluem Modo Humano, suporte via WhatsApp e 7 dias de garantia total.</p>
+    <div class="planos-grid">
+      <div class="plano reveal">
+        <div class="plano-icon">🥉</div>
+        <div class="plano-nome">Básico</div>
+        <div class="plano-setup">Setup único: R$ 600</div>
+        <div class="plano-preco"><span class="rs">R$</span>197<span class="mes">/mês</span></div>
+        <div class="plano-div"></div>
+        <ul class="plano-items">
+          <li><span class="chk chk-yes">✓</span>Bot com fluxo de atendimento</li>
+          <li><span class="chk chk-yes">✓</span>Até 3 fluxos personalizados</li>
+          <li><span class="chk chk-yes">✓</span>Notificação de leads</li>
+          <li><span class="chk chk-yes">✓</span>Modo humano (Takeover)</li>
+          <li><span class="chk chk-yes">✓</span>Suporte via WhatsApp</li>
+          <li class="no"><span class="chk chk-no">✗</span>CRM Google Sheets</li>
+          <li class="no"><span class="chk chk-no">✗</span>Relatório mensal</li>
+        </ul>
+        <a href="https://wa.me/552176569360?text=Quero%20o%20plano%20Basico" class="plano-btn plano-btn-outline" target="_blank">Quero começar agora</a>
+      </div>
+      <div class="plano dest reveal">
+        <div class="plano-badge">⭐ Mais escolhido</div>
+        <div class="plano-icon">🥈</div>
+        <div class="plano-nome">Profissional</div>
+        <div class="plano-setup">Setup único: R$ 997</div>
+        <div class="plano-preco"><span class="rs">R$</span>397<span class="mes">/mês</span></div>
+        <div class="plano-div"></div>
+        <ul class="plano-items">
+          <li><span class="chk chk-yes">✓</span>Tudo do Básico</li>
+          <li><span class="chk chk-yes">✓</span>Bot 100% personalizado</li>
+          <li><span class="chk chk-yes">✓</span>CRM no Google Sheets</li>
+          <li><span class="chk chk-yes">✓</span>Modo humano (Takeover)</li>
+          <li><span class="chk chk-yes">✓</span>Relatório mensal</li>
+          <li><span class="chk chk-yes">✓</span>Notificação em tempo real</li>
+          <li><span class="chk chk-yes">✓</span>Suporte prioritário</li>
+        </ul>
+        <a href="https://wa.me/552176569360?text=Quero%20o%20plano%20Profissional" class="plano-btn plano-btn-white" target="_blank">Quero o Profissional</a>
+      </div>
+      <div class="plano reveal">
+        <div class="plano-icon">🥇</div>
+        <div class="plano-nome">Premium</div>
+        <div class="plano-setup">Setup único: R$ 1.997</div>
+        <div class="plano-preco"><span class="rs">R$</span>797<span class="mes">/mês</span></div>
+        <div class="plano-div"></div>
+        <ul class="plano-items">
+          <li><span class="chk chk-yes">✓</span>Tudo do Profissional</li>
+          <li><span class="chk chk-yes">✓</span>Dashboard web de leads</li>
+          <li><span class="chk chk-yes">✓</span>Bot para grupos</li>
+          <li><span class="chk chk-yes">✓</span>Integrações avançadas</li>
+          <li><span class="chk chk-yes">✓</span>Relatório semanal</li>
+          <li><span class="chk chk-yes">✓</span>Suporte 7 dias/semana</li>
+          <li><span class="chk chk-yes">✓</span>Até 2 números WhatsApp</li>
+        </ul>
+        <a href="https://wa.me/552176569360?text=Quero%20o%20plano%20Premium" class="plano-btn plano-btn-ink" target="_blank">Quero o Premium</a>
+      </div>
+    </div>
+    <div class="garantia-faixa reveal">
+      <span>🛡️</span>
+      <div>
+        <h4>🛡️ Garantia de 7 dias &nbsp;·&nbsp; ⚡ Entrega em até 48h</h4>
+        <p>Bot no ar em até 48h após o fechamento. Se não atender suas expectativas, devolvemos 100% do setup.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 08 — CTA FINAL ══════ -->
+<div class="cta-bg" id="contato">
+  <div class="section-wrap">
+    <div class="cta-box reveal">
+      <div class="section-tag">Comece agora</div>
+      <h2>Pronto para vender <em>enquanto dorme?</em></h2>
+      <div class="cta-urgency">⚡ Bot no ar em até 48h após o fechamento</div>
+      <div class="cta-form">
+        <input class="cta-input" type="tel" placeholder="Seu WhatsApp com DDD" id="cta-wpp">
+        <button class="btn-wpp" onclick="abrirWpp()">📱 Quero ver o bot ao vivo agora</button>
+      </div>
+      <p class="cta-note">🔒 Seus dados estão seguros. Atendemos em minutos.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">MCS<span>digital</span></div>
+    <div class="footer-links">
+      <a href="#problemas">Problemas</a>
+      <a href="#solucao">Solução</a>
+      <a href="#planos">Planos</a>
+      <a href="https://wa.me/552176569360" target="_blank">WhatsApp</a>
+      <a href="mailto:contato@digitalmcs.com.br">Email</a>
+    </div>
+  </div>
+  <div class="footer-copy">
+    <span>© 2026 MCS Digital — Misael Costa da Silva — Duque de Caxias, RJ</span>
+    <span>digitalmcs.com.br</span>
+  </div>
+</footer>
+
+<!-- PÁGINAS INTERNAS -->
+<div class="servico-page" id="page-ia">
+  <header class="sp-header"><button class="sp-back" onclick="fecharPagina()">← Voltar</button><span class="sp-brand">MCS<span>digital</span></span></header>
+  <div class="sp-hero">
+    <div class="sp-tag">Agente de IA</div>
+    <div class="sp-icon-wrap">🤖</div>
+    <h1 class="sp-title">Atendimento inteligente,<br><span class="volt">sem parar nunca.</span></h1>
+    <p class="sp-subtitle">Imagine um vendedor que nunca dorme, nunca falta e atende centenas de clientes ao mesmo tempo.</p>
+    <div class="sp-stats">
+      <div class="sp-stat"><div class="sp-stat-num">24h</div><div class="sp-stat-label">atendimento ininterrupto</div></div>
+      <div class="sp-stat"><div class="sp-stat-num">+80%</div><div class="sp-stat-label">redução no tempo de resposta</div></div>
+      <div class="sp-stat"><div class="sp-stat-num">∞</div><div class="sp-stat-label">clientes simultâneos</div></div>
+    </div>
+  </div>
+  <div class="sp-body">
+    <div class="sp-sub-tag">Por que investir</div>
+    <h2 class="sp-sub-title">O Agente que trabalha por você.</h2>
+    <div class="vant-grid">
+      <div class="vant-card"><div class="vant-icon">⏰</div><div class="vant-title">Atende 24h por dia</div><div class="vant-desc">Cliente às 3h da manhã? Respondido na hora. Sem perder vendas por fora do horário.</div></div>
+      <div class="vant-card"><div class="vant-icon">🧠</div><div class="vant-title">IA de última geração</div><div class="vant-desc">Powered by Claude AI — respostas naturais, inteligentes e personalizadas para cada cliente.</div></div>
+      <div class="vant-card"><div class="vant-icon">🎯</div><div class="vant-title">Qualifica leads sozinho</div><div class="vant-desc">Identifica interesse real, coleta dados e te notifica. Você age quando o lead está quente.</div></div>
+      <div class="vant-card"><div class="vant-icon">✋</div><div class="vant-title">Modo humano</div><div class="vant-desc">!assumir para entrar, !bot para sair. Controle total quando precisar fechar pessoalmente.</div></div>
+      <div class="vant-card"><div class="vant-icon">📊</div><div class="vant-title">CRM integrado</div><div class="vant-desc">Todos os leads no Google Sheets automaticamente. Histórico organizado sem esforço.</div></div>
+      <div class="vant-card"><div class="vant-icon">💰</div><div class="vant-title">ROI imediato</div><div class="vant-desc">Mensalidade menor que um salário. Gera leads qualificados todo dia.</div></div>
+    </div>
+    <div class="sp-sub-tag">Antes vs Depois</div>
+    <h2 class="sp-sub-title">Seu atendimento antes e depois da IA.</h2>
+    <div class="comp-grid">
+      <div class="comp-card comp-antes"><div class="comp-label">✗ Sem Agente de IA</div><ul class="comp-list"><li><span class="cico">✗</span>Perde clientes fora do horário</li><li><span class="cico">✗</span>Responde as mesmas perguntas todo dia</li><li><span class="cico">✗</span>Leads sem follow-up viram concorrência</li><li><span class="cico">✗</span>Sem controle de oportunidades</li><li><span class="cico">✗</span>Gasta tempo atendendo em vez de vender</li></ul></div>
+      <div class="comp-card comp-depois"><div class="comp-label">✓ Com MCS Digital</div><ul class="comp-list"><li><span class="cico">✓</span>Atende clientes 24h, 7 dias por semana</li><li><span class="cico">✓</span>Responde com inteligência real</li><li><span class="cico">✓</span>Follow-up automático — nunca perde venda</li><li><span class="cico">✓</span>CRM automático com todos os dados</li><li><span class="cico">✓</span>Você foca em fechar, não em responder</li></ul></div>
+    </div>
+  </div>
+  <div class="sp-cta"><h3>Quer um Agente de IA para o seu negócio?</h3><p>Veja uma demonstração ao vivo, sem compromisso.</p><a href="https://wa.me/552176569360?text=Quero%20ver%20o%20Agente%20de%20IA" class="btn-wpp-inline" target="_blank">📱 Ver demonstração grátis</a></div>
+</div>
+
+<div class="servico-page" id="page-auto">
+  <header class="sp-header"><button class="sp-back" onclick="fecharPagina()">← Voltar</button><span class="sp-brand">MCS<span>digital</span></span></header>
+  <div class="sp-hero">
+    <div class="sp-tag">Automações</div>
+    <div class="sp-icon-wrap">⚙️</div>
+    <h1 class="sp-title">Trabalhe menos,<br><span class="volt">produza mais.</span></h1>
+    <p class="sp-subtitle">Tarefas repetitivas consomem seu tempo. Com automações inteligentes, seu negócio opera no piloto automático.</p>
+    <div class="sp-stats">
+      <div class="sp-stat"><div class="sp-stat-num">-70%</div><div class="sp-stat-label">tempo com tarefas manuais</div></div>
+      <div class="sp-stat"><div class="sp-stat-num">0</div><div class="sp-stat-label">erros humanos</div></div>
+      <div class="sp-stat"><div class="sp-stat-num">+3x</div><div class="sp-stat-label">mais produtividade</div></div>
+    </div>
+  </div>
+  <div class="sp-body">
+    <div class="sp-sub-tag">Por que automatizar</div>
+    <h2 class="sp-sub-title">O que as automações fazem pelo seu negócio.</h2>
+    <div class="vant-grid">
+      <div class="vant-card"><div class="vant-icon">🔄</div><div class="vant-title">Fluxos automáticos</div><div class="vant-desc">Mensagens, confirmações, lembretes e follow-ups. Tudo acontece sozinho.</div></div>
+      <div class="vant-card"><div class="vant-icon">📋</div><div class="vant-title">Organização automática</div><div class="vant-desc">Dados organizados automaticamente. Nunca mais perca informação importante.</div></div>
+      <div class="vant-card"><div class="vant-icon">🔔</div><div class="vant-title">Alertas inteligentes</div><div class="vant-desc">Notificações de novos pedidos, leads e mais — direto no seu WhatsApp.</div></div>
+      <div class="vant-card"><div class="vant-icon">🤝</div><div class="vant-title">Integração total</div><div class="vant-desc">WhatsApp, Google Sheets, email e mais. Tudo conectado e funcionando junto.</div></div>
+      <div class="vant-card"><div class="vant-icon">💸</div><div class="vant-title">Reduz custos</div><div class="vant-desc">Elimina erros e retrabalho. O investimento se paga rápido.</div></div>
+      <div class="vant-card"><div class="vant-icon">🚀</div><div class="vant-title">Escala infinita</div><div class="vant-desc">10 ou 10.000 clientes com o mesmo esforço.</div></div>
+    </div>
+    <div class="sp-sub-tag">Antes vs Depois</div>
+    <h2 class="sp-sub-title">O impacto real no seu dia a dia.</h2>
+    <div class="comp-grid">
+      <div class="comp-card comp-antes"><div class="comp-label">✗ Sem automações</div><ul class="comp-list"><li><span class="cico">✗</span>Horas perdidas em tarefas repetitivas</li><li><span class="cico">✗</span>Erros humanos e retrabalho constante</li><li><span class="cico">✗</span>Informações espalhadas e desorganizadas</li><li><span class="cico">✗</span>Esquece follow-up e perde clientes</li></ul></div>
+      <div class="comp-card comp-depois"><div class="comp-label">✓ Com MCS Digital</div><ul class="comp-list"><li><span class="cico">✓</span>Processos rodando sozinhos 24h</li><li><span class="cico">✓</span>Zero erros — máquina não esquece</li><li><span class="cico">✓</span>Tudo centralizado automaticamente</li><li><span class="cico">✓</span>Follow-up automático — nunca perde venda</li></ul></div>
+    </div>
+  </div>
+  <div class="sp-cta"><h3>Pronto para automatizar seu negócio?</h3><p>Descubra quais processos podem ser automatizados hoje.</p><a href="https://wa.me/552176569360?text=Quero%20automatizar%20meu%20negocio" class="btn-wpp-inline" target="_blank">📱 Falar no WhatsApp</a></div>
+</div>
+
+<script>
+// Nav scroll
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50);});
+
+// Reveal on scroll
+const obs=new IntersectionObserver(es=>{es.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('vis'),i*70);});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const h=a.getAttribute('href');if(h.length>1){e.preventDefault();const t=document.querySelector(h);if(t)t.scrollIntoView({behavior:'smooth'});}});});
+
+// CTA com número
+function abrirWpp(){
+  const num = document.getElementById('cta-wpp').value.trim();
+  const msg = num ? `Oi! Meu WhatsApp é ${num}. Quero ver o bot ao vivo!` : 'Quero ver o Agente de IA ao vivo!';
+  window.open(`https://wa.me/552176569360?text=${encodeURIComponent(msg)}`, '_blank');
+}
+document.getElementById('cta-wpp').addEventListener('keypress', e => {if(e.key === 'Enter') abrirWpp();});
+
+// Páginas internas
+function abrirPagina(id){document.getElementById(id).classList.add('ativa');document.body.style.overflow='hidden';window.scrollTo(0,0);}
+function fecharPagina(){document.querySelectorAll('.servico-page').forEach(p=>p.classList.remove('ativa'));document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fecharPagina();});
+</script>
+</body>
+</html>

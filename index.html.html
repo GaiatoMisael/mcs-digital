@@ -19,78 +19,84 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --bg:#F7F7FC;
-  --white:#FFFFFF;
-  --ink:#0C0C16;
-  --ink2:#33334A;
-  --muted:#6C6C88;
-  --muted2:#9B9BB4;
-  --violet:#6D5AE6;
-  --violet2:#8B7CFF;
-  --violet3:#B6ACFF;
-  --cyan:#12AFD8;
-  --cyan2:#57D6F2;
-  --pink:#FF77D9;
-  --gold:#C9922B;
-  --green:#0FA372;
-  --wpp:#1FBE5B;
-  --red:#E5484D;
-  --line:rgba(12,12,22,.08);
-  --line2:rgba(12,12,22,.14);
-  --card:#FFFFFF;
+  --bg:#F7F7FC;--white:#FFFFFF;
+  --ink:#0C0C16;--ink2:#33334A;--muted:#6C6C88;--muted2:#9B9BB4;
+  --violet:#6D5AE6;--violet2:#8B7CFF;--violet3:#B6ACFF;
+  --cyan:#12AFD8;--cyan2:#57D6F2;
+  --gold:#C9922B;--green:#0FA372;--wpp:#1FBE5B;--red:#E5484D;
+  --line:rgba(12,12,22,.08);--line2:rgba(12,12,22,.14);--card:#FFFFFF;
   --shadow-s:0 2px 8px rgba(20,18,60,.05);
   --shadow:0 12px 32px rgba(20,18,60,.07);
   --shadow-lg:0 30px 70px rgba(20,18,60,.12);
   --shadow-xl:0 50px 120px rgba(20,18,60,.16);
   --grad:linear-gradient(120deg,#8B7CFF,#6D5AE6 45%,#12AFD8);
   --grad-txt:linear-gradient(110deg,#7B69F0,#6D5AE6 40%,#12AFD8);
-  --t:.6s cubic-bezier(.16,1,.3,1);
+  --e:cubic-bezier(.16,1,.3,1);
+  --t:.6s var(--e);
 }
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 ::selection{background:var(--violet);color:#fff;}
-img,svg,video{display:block;max-width:100%;}
+img,svg,video,canvas{display:block;max-width:100%;}
 h1,h2,h3,.dfont{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;}
 .ic{width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
 .tabnum{font-variant-numeric:tabular-nums;}
 .g{background:var(--grad-txt);-webkit-background-clip:text;background-clip:text;color:transparent;}
 
-/* ══ ANIMATED BACKGROUND ══ */
+/* ══ PRELOADER ══ */
+#pre{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;transition:opacity .9s var(--e),visibility .9s;}
+#pre.done{opacity:0;visibility:hidden;}
+.pre-logo{display:flex;align-items:center;gap:12px;opacity:0;animation:preIn .9s var(--e) .1s forwards;}
+.pre-brand{font-family:'Clash Display';font-size:26px;font-weight:600;}
+.pre-brand span{background:var(--grad-txt);-webkit-background-clip:text;background-clip:text;color:transparent;}
+@keyframes preIn{to{opacity:1}}
+.pre-bar{width:min(320px,60vw);height:2px;background:var(--line2);border-radius:2px;overflow:hidden;}
+.pre-fill{height:100%;width:0;background:var(--grad);border-radius:2px;transition:width .3s linear;}
+.pre-num{font-family:'Clash Display';font-size:13px;font-weight:600;color:var(--muted);letter-spacing:2px;}
+
+/* ══ WEBGL + BG ══ */
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--bg);}
-.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;will-change:transform;}
-.b1{width:620px;height:620px;top:-180px;left:-140px;background:radial-gradient(circle,rgba(139,124,255,.65),transparent 68%);animation:float1 26s ease-in-out infinite;}
-.b2{width:560px;height:560px;top:4%;right:-160px;background:radial-gradient(circle,rgba(87,214,242,.55),transparent 68%);animation:float2 32s ease-in-out infinite;}
-.b3{width:520px;height:520px;top:52%;left:8%;background:radial-gradient(circle,rgba(255,119,217,.34),transparent 68%);animation:float3 30s ease-in-out infinite;}
-.b4{width:600px;height:600px;bottom:-200px;right:5%;background:radial-gradient(circle,rgba(139,124,255,.42),transparent 68%);animation:float1 34s ease-in-out infinite reverse;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform;}
+.b1{width:620px;height:620px;top:-180px;left:-140px;background:radial-gradient(circle,rgba(139,124,255,.62),transparent 68%);animation:float1 26s ease-in-out infinite;}
+.b2{width:560px;height:560px;top:4%;right:-160px;background:radial-gradient(circle,rgba(87,214,242,.5),transparent 68%);animation:float2 32s ease-in-out infinite;}
+.b3{width:520px;height:520px;top:52%;left:8%;background:radial-gradient(circle,rgba(255,119,217,.3),transparent 68%);animation:float3 30s ease-in-out infinite;}
+.b4{width:600px;height:600px;bottom:-200px;right:5%;background:radial-gradient(circle,rgba(139,124,255,.4),transparent 68%);animation:float1 34s ease-in-out infinite reverse;}
 @keyframes float1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,50px) scale(1.12)}66%{transform:translate(-40px,30px) scale(.94)}}
 @keyframes float2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-70px,60px) scale(1.15)}}
 @keyframes float3{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(50px,-60px) scale(1.08)}75%{transform:translate(-50px,20px) scale(.96)}}
-.bg-grid{position:absolute;inset:0;
-  background-image:linear-gradient(rgba(109,90,230,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(109,90,230,.055) 1px,transparent 1px);
-  background-size:70px 70px;
-  mask-image:radial-gradient(ellipse 100% 70% at 50% 0%,#000 10%,transparent 75%);
-  -webkit-mask-image:radial-gradient(ellipse 100% 70% at 50% 0%,#000 10%,transparent 75%);}
-.bg-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(247,247,252,.2),rgba(247,247,252,.72) 45%,rgba(247,247,252,.92));}
-.bg-grain{position:absolute;inset:-150%;opacity:.035;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation:grain 8s steps(5) infinite;}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(109,90,230,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(109,90,230,.05) 1px,transparent 1px);background-size:70px 70px;mask-image:radial-gradient(ellipse 100% 70% at 50% 0%,#000 10%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 100% 70% at 50% 0%,#000 10%,transparent 75%);}
+.bg-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(247,247,252,.18),rgba(247,247,252,.62) 45%,rgba(247,247,252,.85));}
+.bg-grain{position:absolute;inset:-150%;opacity:.032;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 8s steps(5) infinite;}
 @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,1%)}100%{transform:translate(0,0)}}
-/* floating 3D orbs (parallax) */
-.orb{position:absolute;pointer-events:none;opacity:.5;will-change:transform;filter:drop-shadow(0 20px 40px rgba(80,60,200,.16));}
+#gl{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity 1.4s var(--e);}
+#gl.on{opacity:1;}
 main,nav,footer{position:relative;z-index:3;}
+
+#sw,#sc{position:relative;z-index:3;}
+
+/* ══ CURSOR ══ */
+.cur,.cur-d{position:fixed;top:0;left:0;border-radius:50%;pointer-events:none;z-index:8000;opacity:0;transition:opacity .4s;}
+.cur{width:38px;height:38px;border:1.5px solid rgba(109,90,230,.55);margin:-19px 0 0 -19px;transition:width .35s var(--e),height .35s var(--e),margin .35s var(--e),background .35s,opacity .4s,border-color .35s;}
+.cur-d{width:6px;height:6px;background:var(--violet);margin:-3px 0 0 -3px;}
+.cur.big{width:74px;height:74px;margin:-37px 0 0 -37px;background:rgba(109,90,230,.1);border-color:transparent;}
+html.has-cursor .cur,html.has-cursor .cur-d{opacity:1;}
 
 /* ══ SHARED ══ */
 .wrap{max-width:1200px;margin:0 auto;padding:0 40px;}
-.section{padding:120px 0;position:relative;}
+.section{padding:130px 0;position:relative;}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--violet);margin-bottom:20px;}
 .eyebrow::before{content:'';width:26px;height:2px;background:var(--grad);border-radius:2px;}
 .center .eyebrow::before{display:none;}
-.h-sec{font-size:clamp(32px,4.6vw,56px);line-height:1.04;margin-bottom:20px;}
+.h-sec{font-size:clamp(32px,4.8vw,58px);line-height:1.03;margin-bottom:20px;}
 .sub{font-size:18px;color:var(--muted);max-width:600px;line-height:1.7;}
 .center{text-align:center;}
 .center .sub,.center .h-sec{margin-left:auto;margin-right:auto;}
+/* mask reveal */
+.mask{overflow:hidden;display:block;}
+.js .mask>*{transform:translateY(115%);transition:transform 1.15s var(--e);}
+.js .mask.vis>*{transform:none;}
 
-.btn{border:none;border-radius:100px;cursor:pointer;text-decoration:none;font-family:inherit;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:var(--t);white-space:nowrap;}
+.btn{border:none;border-radius:100px;cursor:pointer;text-decoration:none;font-family:inherit;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:var(--t);white-space:nowrap;position:relative;}
 .btn .ic{width:18px;height:18px;}
 .btn-lg{padding:18px 34px;font-size:16px;}
 .btn-primary{background:var(--grad);color:#fff;box-shadow:0 12px 30px rgba(109,90,230,.32);}
@@ -99,13 +105,11 @@ main,nav,footer{position:relative;z-index:3;}
 .btn-wpp:hover{transform:translateY(-3px);box-shadow:0 20px 44px rgba(31,190,91,.42);}
 .btn-light{background:var(--white);color:var(--ink);border:1px solid var(--line2);box-shadow:var(--shadow-s);}
 .btn-light:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--violet3);color:var(--violet);}
-.btn-dark{background:var(--ink);color:#fff;}
-.btn-dark:hover{transform:translateY(-3px);background:var(--violet);}
 .card{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);}
 
 /* ══ NAV ══ */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;transition:var(--t);}
-nav.scrolled{padding:11px 40px;background:rgba(247,247,252,.78);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-bottom:1px solid var(--line);}
+nav.scrolled{padding:11px 40px;background:rgba(247,247,252,.7);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-bottom:1px solid var(--line);}
 .logo{display:flex;align-items:center;gap:11px;text-decoration:none;}
 .logo-mark{width:40px;height:40px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(109,90,230,.36);}
 .logo-brand{font-family:'Clash Display';font-size:21px;font-weight:600;color:var(--ink);}
@@ -124,15 +128,17 @@ nav.scrolled{padding:11px 40px;background:rgba(247,247,252,.78);backdrop-filter:
 .hamb.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
 .hamb.open span:nth-child(2){opacity:0;}
 .hamb.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+/* scroll progress */
+.prog{position:fixed;top:0;left:0;height:2px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:var(--grad);z-index:250;}
 
 /* ══ HERO ══ */
-.hero{padding:150px 0 90px;}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;}
+.hero{min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:130px 0 80px;}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;width:100%;}
 .hero-badge{display:inline-flex;align-items:center;gap:10px;background:var(--white);border:1px solid var(--line);border-radius:100px;padding:7px 7px 7px 15px;font-size:13px;font-weight:500;color:var(--ink2);margin-bottom:26px;box-shadow:var(--shadow-s);}
 .hero-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(15,163,114,.15);animation:pulse 2.2s infinite;}
 .hero-badge .pill{background:linear-gradient(120deg,rgba(139,124,255,.15),rgba(18,175,216,.15));color:var(--violet);border-radius:100px;padding:3px 11px;font-weight:700;font-size:12px;}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(15,163,114,.15)}50%{box-shadow:0 0 0 8px rgba(15,163,114,.02)}}
-.hero h1{font-size:clamp(42px,5.6vw,76px);line-height:1;letter-spacing:-.035em;margin-bottom:24px;}
+.hero h1{font-size:clamp(42px,5.8vw,80px);line-height:1;letter-spacing:-.038em;margin-bottom:24px;}
 .hero h1 em{font-family:'Plus Jakarta Sans';font-style:italic;font-weight:500;letter-spacing:-.02em;color:var(--ink2);}
 .hero-sub{font-size:clamp(17px,1.5vw,19px);color:var(--muted);max-width:520px;margin-bottom:32px;line-height:1.65;}
 .hero-sub strong{color:var(--ink);font-weight:700;}
@@ -140,22 +146,24 @@ nav.scrolled{padding:11px 40px;background:rgba(247,247,252,.78);backdrop-filter:
 .hero-pills{display:flex;flex-wrap:wrap;gap:9px;margin-top:30px;}
 .hpill{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);border-radius:100px;padding:9px 16px;font-size:13.5px;font-weight:500;color:var(--ink2);box-shadow:var(--shadow-s);}
 .hpill .ic{width:16px;height:16px;stroke:var(--green);}
-/* hero visual */
 .hero-vis{position:relative;display:flex;align-items:center;justify-content:center;}
-.hero-vis::before{content:'';position:absolute;width:78%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(139,124,255,.4),rgba(87,214,242,.18) 45%,transparent 70%);filter:blur(50px);}
-.hero-media{position:relative;width:100%;max-width:520px;aspect-ratio:1;animation:levitate 7s ease-in-out infinite;}
+.hero-vis::before{content:'';position:absolute;width:78%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(139,124,255,.36),rgba(87,214,242,.16) 45%,transparent 70%);filter:blur(50px);}
+.hero-media{position:relative;width:100%;max-width:500px;aspect-ratio:1;animation:levitate 7s ease-in-out infinite;}
 .hero-media img,.hero-media video{width:100%;height:100%;object-fit:contain;border-radius:24px;}
 .hero-media video{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;}
 .hero-media video.on{opacity:1;}
-@keyframes levitate{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-22px) rotate(1.5deg)}}
-/* floating stat chips */
-.chip-f{position:absolute;background:rgba(255,255,255,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 16px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:11px;z-index:2;}
+@keyframes levitate{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-20px) rotate(1.4deg)}}
+.chip-f{position:absolute;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 16px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:11px;z-index:2;}
 .chip-f .ci{width:36px;height:36px;border-radius:10px;background:linear-gradient(120deg,rgba(139,124,255,.16),rgba(18,175,216,.16));display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .chip-f .ci .ic{width:19px;height:19px;stroke:var(--violet);}
-.chip-f b{font-family:'Clash Display';font-size:17px;font-weight:600;display:block;line-height:1.1;color:var(--ink);}
+.chip-f b{font-family:'Clash Display';font-size:17px;font-weight:600;display:block;line-height:1.1;}
 .chip-f span{font-size:11.5px;color:var(--muted);}
 .cf1{top:8%;left:-4%;animation:levitate 6s ease-in-out infinite .4s;}
 .cf2{bottom:12%;right:-6%;animation:levitate 6.6s ease-in-out infinite 1.1s;}
+.scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:9px;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);font-weight:600;}
+.scroll-hint .m{width:22px;height:34px;border:1.5px solid var(--line2);border-radius:12px;position:relative;}
+.scroll-hint .m::after{content:'';position:absolute;top:6px;left:50%;transform:translateX(-50%);width:3px;height:6px;background:var(--violet);border-radius:2px;animation:sd 1.6s infinite;}
+@keyframes sd{0%{opacity:0;top:6px}40%{opacity:1}80%{opacity:0;top:16px}100%{opacity:0}}
 
 /* ══ MARQUEE ══ */
 .mq-sec{padding:26px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.5);overflow:hidden;}
@@ -167,25 +175,27 @@ nav.scrolled{padding:11px 40px;background:rgba(247,247,252,.78);backdrop-filter:
 .mq-item .ic{width:17px;height:17px;stroke:var(--violet2);}
 @keyframes scrollx{to{transform:translateX(-50%)}}
 
-/* ══ SERVIÇOS ══ */
-.serv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px;}
-.tilt{perspective:1200px;}
-.serv{position:relative;padding:0 0 34px;border-radius:26px;overflow:hidden;cursor:pointer;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .4s,border-color .4s;transform-style:preserve-3d;height:100%;display:flex;flex-direction:column;}
-.serv:hover{box-shadow:var(--shadow-xl);border-color:var(--violet3);}
-.serv-vis{position:relative;height:210px;display:flex;align-items:center;justify-content:center;background:linear-gradient(170deg,#F4F3FF,#FFFFFF 70%);overflow:hidden;}
-.serv-vis::after{content:'';position:absolute;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(139,124,255,.3),transparent 68%);filter:blur(26px);}
-.serv-vis img{position:relative;width:158px;height:158px;object-fit:contain;transition:transform .6s cubic-bezier(.16,1,.3,1);z-index:1;}
-.serv:hover .serv-vis img{transform:scale(1.1) translateY(-6px) rotate(-3deg);}
-.serv-body{padding:26px 30px 0;transform:translateZ(30px);}
-.serv-tag{position:absolute;top:18px;right:18px;font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--gold);background:rgba(201,146,43,.1);border:1px solid rgba(201,146,43,.24);padding:4px 11px;border-radius:100px;z-index:2;}
-.serv-name{font-family:'Clash Display';font-size:23px;margin-bottom:10px;}
-.serv-desc{font-size:14.5px;color:var(--muted);line-height:1.7;margin-bottom:18px;}
-.serv-list{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:20px;}
-.serv-list li{font-size:13.5px;color:var(--ink2);display:flex;gap:10px;align-items:center;}
-.serv-list .ic{width:17px;height:17px;stroke:var(--violet);}
-.serv-more{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--violet);transition:.3s;}
-.serv:hover .serv-more{gap:12px;}
-.serv-more .ic{width:17px;height:17px;}
+/* ══ SERVIÇOS PINNED ══ */
+.pin-sec{position:relative;height:340vh;}
+.pin-stage{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;overflow:hidden;}
+.pin-inner{width:100%;max-width:1200px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.pin-visual{position:relative;aspect-ratio:1;max-width:440px;width:100%;justify-self:center;}
+.pin-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:scale(.82) rotate(-8deg);transition:opacity .8s var(--e),transform 1s var(--e);}
+.pin-visual img.on{opacity:1;transform:none;}
+.pin-visual::before{content:'';position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,rgba(139,124,255,.34),transparent 68%);filter:blur(40px);}
+.pin-panel{position:relative;}
+.pin-item{position:absolute;top:50%;transform:translateY(-42%);opacity:0;visibility:hidden;transition:opacity .7s var(--e),transform .9s var(--e);width:100%;}
+.pin-item.on{opacity:1;visibility:visible;transform:translateY(-50%);}
+.pin-count{font-family:'Clash Display';font-size:13px;font-weight:600;letter-spacing:3px;color:var(--violet);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.pin-count::after{content:'';width:44px;height:1px;background:var(--line2);}
+.pin-name{font-family:'Clash Display';font-size:clamp(30px,4vw,50px);line-height:1.04;letter-spacing:-.035em;margin-bottom:16px;}
+.pin-desc{font-size:16.5px;color:var(--muted);line-height:1.7;margin-bottom:22px;max-width:460px;}
+.pin-list{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:26px;}
+.pin-list li{font-size:14.5px;color:var(--ink2);display:flex;gap:11px;align-items:center;}
+.pin-list .ic{width:18px;height:18px;stroke:var(--violet);}
+.pin-dots{position:absolute;left:40px;bottom:8vh;display:flex;gap:9px;z-index:5;}
+.pin-dot{width:30px;height:3px;border-radius:3px;background:var(--line2);transition:.5s;}
+.pin-dot.on{background:var(--grad);width:52px;}
 
 /* ══ NÚMEROS ══ */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-radius:26px;overflow:hidden;background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-lg);}
@@ -209,7 +219,7 @@ nav.scrolled{padding:11px 40px;background:rgba(247,247,252,.78);backdrop-filter:
 /* ══ SHOWCASE ══ */
 .show-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:60px;align-items:center;}
 .show-stage{perspective:1500px;}
-.show-card{transform:rotateY(-13deg) rotateX(6deg);transition:transform 1s var(--t);transform-style:preserve-3d;}
+.show-card{transform:rotateY(-13deg) rotateX(6deg);transition:transform 1s var(--e);transform-style:preserve-3d;}
 .show-stage:hover .show-card{transform:rotateY(-5deg) rotateX(2deg);}
 .dash{background:var(--white);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-xl);}
 .dash-top{padding:13px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);background:#FCFCFE;}
@@ -256,7 +266,7 @@ nav.scrolled{padding:11px 40px;background:rgba(247,247,252,.78);backdrop-filter:
 .modo{position:relative;border-radius:32px;overflow:hidden;padding:64px 52px;background:linear-gradient(150deg,#F1EFFF,#FFFFFF 55%,#EAF8FC);border:1px solid var(--line);box-shadow:var(--shadow-lg);}
 .modo-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
 .cmds{display:flex;flex-direction:column;gap:12px;margin-top:28px;}
-.cmd{background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:14px;padding:15px 18px;display:flex;align-items:center;gap:16px;transition:.35s;}
+.cmd{background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:14px;padding:15px 18px;display:flex;align-items:center;gap:16px;transition:.35s;}
 .cmd:hover{border-color:var(--violet3);transform:translateX(4px);box-shadow:var(--shadow);}
 .cmd-code{background:var(--grad);border-radius:9px;padding:8px 15px;font-family:ui-monospace,monospace;font-size:13.5px;font-weight:700;color:#fff;flex-shrink:0;}
 .cmd-desc{font-size:14px;color:var(--ink2);}
@@ -319,7 +329,7 @@ nav.scrolled{padding:11px 40px;background:rgba(247,247,252,.78);backdrop-filter:
 .chk-n{background:rgba(12,12,22,.05);}
 .chk-n .ic{stroke:var(--muted2);}
 .plano .btn{margin-top:28px;width:100%;}
-.garantia{max-width:1200px;margin:34px auto 0;background:rgba(15,163,114,.06);border:1px solid rgba(15,163,114,.2);border-radius:18px;padding:22px 30px;display:flex;align-items:center;gap:18px;}
+.garantia{margin:34px auto 0;background:rgba(15,163,114,.06);border:1px solid rgba(15,163,114,.2);border-radius:18px;padding:22px 30px;display:flex;align-items:center;gap:18px;}
 .garantia-ic{width:52px;height:52px;border-radius:14px;background:rgba(15,163,114,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .garantia-ic .ic{stroke:var(--green);width:26px;height:26px;}
 .garantia h4{font-size:16px;font-weight:700;margin-bottom:3px;}
@@ -332,7 +342,7 @@ nav.scrolled{padding:11px 40px;background:rgba(247,247,252,.78);backdrop-filter:
 .faq-q{width:100%;background:none;border:none;color:var(--ink);font-family:inherit;font-size:16px;font-weight:600;text-align:left;padding:22px 24px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .faq-q .ic{width:20px;height:20px;stroke:var(--violet);transition:.35s;flex-shrink:0;}
 .faq.open .faq-q .ic{transform:rotate(45deg);}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .4s var(--t);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s var(--e);}
 .faq-a p{padding:0 24px 22px;font-size:14.5px;color:var(--muted);line-height:1.7;}
 
 /* ══ CTA ══ */
@@ -375,8 +385,8 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
 @keyframes wppb{0%,100%{box-shadow:0 10px 30px rgba(31,190,91,.4)}50%{box-shadow:0 10px 30px rgba(31,190,91,.12),0 0 0 14px rgba(31,190,91,.06)}}
 
 /* ══ INTERNAL PAGES ══ */
-.sp{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;overflow-y:auto;}
-.sp.active{display:block;animation:pagein .5s var(--t);}
+.sp{display:none;position:fixed;inset:0;background:var(--bg);z-index:600;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.sp.active{display:block;animation:pagein .5s var(--e);}
 @keyframes pagein{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
 .sp-head{position:sticky;top:0;z-index:10;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,247,252,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);}
 .sp-back{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;background:none;border:none;font-family:inherit;transition:.3s;}
@@ -427,9 +437,9 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
 .sp-subtitle2{font-family:'Clash Display';font-size:clamp(26px,3.4vw,40px);}
 
 /* ══ REVEAL ══ */
-.js .reveal{opacity:0;transform:translateY(34px);transition:opacity .9s var(--t),transform .9s var(--t);}
+.js .reveal{opacity:0;transform:translateY(34px);transition:opacity .9s var(--e),transform .9s var(--e);}
 .js .reveal.vis{opacity:1;transform:none;}
-.js .stagger>*{opacity:0;transform:translateY(30px);transition:opacity .8s var(--t),transform .8s var(--t);}
+.js .stagger>*{opacity:0;transform:translateY(30px);transition:opacity .8s var(--e),transform .8s var(--e);}
 .js .stagger.vis>*{opacity:1;transform:none;}
 
 /* ══ RESPONSIVE ══ */
@@ -441,18 +451,29 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
   .nav-right .nav-cta{display:none;}
   .hamb{display:flex;}
   .wrap{padding:0 20px;}
-  .section{padding:76px 0;}
-  .hero{padding:112px 0 60px;}
+  .section{padding:80px 0;}
+  .hero{min-height:0;padding:112px 0 60px;}
   .hero-grid{grid-template-columns:1fr;gap:44px;text-align:center;}
   .hero-sub{margin-left:auto;margin-right:auto;}
   .hero-cta,.hero-pills{justify-content:center;}
   .hero-vis{order:-1;}
-  .hero-media{max-width:360px;}
+  .hero-media{max-width:340px;}
   .cf1{left:-2%;}.cf2{right:-2%;}
+  .scroll-hint{display:none;}
+  /* pinned -> stacked */
+  .pin-sec{height:auto;}
+  .pin-stage{position:relative;height:auto;display:block;padding:10px 0;}
+  .pin-inner{grid-template-columns:1fr;gap:26px;padding:0 20px;}
+  .pin-panel{position:static;}
+  .pin-item{position:static;opacity:1;visibility:visible;transform:none;margin-bottom:54px;}
+  .pin-visual{max-width:260px;margin-bottom:6px;}
+  .pin-visual img{position:static;opacity:1;transform:none;display:none;}
+  .pin-visual img.m-show{display:block;}
+  .pin-dots{display:none;}
   .stats{grid-template-columns:repeat(2,1fr);}
   .stat:nth-child(2){border-right:none;}
   .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--line);}
-  .serv-grid,.depo-grid{grid-template-columns:1fr;}
+  .depo-grid{grid-template-columns:1fr;}
   .proc{grid-template-columns:repeat(2,1fr);}
   .show-grid,.modo-inner{grid-template-columns:1fr;gap:44px;}
   .show-card{transform:none;}
@@ -465,22 +486,30 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
   .sp-stat{border-right:none;border-bottom:1px solid var(--line);}
   .sp-body,.sp-head,.sp-hero,.sp-cta{padding-left:20px;padding-right:20px;}
   .cta-box{padding:52px 24px;}
-  .orb{display:none;}
 }
-@media(max-width:560px){
-  .proc{grid-template-columns:1fr;}
-  .chip-f{padding:9px 12px;}
-  .chip-f b{font-size:15px;}
-  .chip-f .ci{width:30px;height:30px;}
-}
+@media(max-width:560px){.proc{grid-template-columns:1fr;}}
 @media(prefers-reduced-motion:reduce){
   *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
-  .js .reveal,.js .stagger>*{opacity:1!important;transform:none!important;}
-  html{scroll-behavior:auto;}
+  .js .reveal,.js .stagger>*,.js .mask>*{opacity:1!important;transform:none!important;}
+  .pin-sec{height:auto;}
+  .pin-stage{position:relative;height:auto;display:block;}
+  .pin-item{position:static;opacity:1;visibility:visible;transform:none;margin-bottom:50px;}
+  .pin-visual img{position:static;opacity:1;transform:none;display:none;}
+  .pin-visual img.m-show{display:block;}
 }
 </style>
 </head>
 <body>
+
+<!-- PRELOADER -->
+<div id="pre">
+  <div class="pre-logo">
+    <span class="logo-mark"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="2" width="4" height="18" rx="1" fill="#fff"/><rect x="17" y="2" width="4" height="18" rx="1" fill="#fff"/><path d="M5 2 L11 14 L17 2" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="17" r="2.5" fill="#fff"/></svg></span>
+    <span class="pre-brand">MCS<span>digital</span></span>
+  </div>
+  <div class="pre-bar"><div class="pre-fill" id="prefill"></div></div>
+  <div class="pre-num" id="prenum">0%</div>
+</div>
 
 <!-- ICONS -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -518,75 +547,63 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
   <symbol id="i-money" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></symbol>
 </svg>
 
-<!-- ANIMATED BACKGROUND -->
+<!-- BACKGROUND -->
 <div class="bg">
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
-  <div class="bg-grid"></div>
-  <div class="bg-veil"></div>
-  <div class="bg-grain"></div>
-  <img class="orb" data-speed="0.16" src="assets/ia.webp" alt="" aria-hidden="true" style="width:110px;top:120vh;left:6%;">
-  <img class="orb" data-speed="-0.12" src="assets/auto.webp" alt="" aria-hidden="true" style="width:150px;top:190vh;right:5%;left:auto;">
-  <img class="orb" data-speed="0.2" src="assets/sites.webp" alt="" aria-hidden="true" style="width:120px;top:290vh;left:8%;">
+  <div class="bg-grid"></div><div class="bg-veil"></div><div class="bg-grain"></div>
 </div>
+<canvas id="gl"></canvas>
+<div class="prog" id="prog"></div>
+<div class="cur" id="cur"></div><div class="cur-d" id="curd"></div>
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="#" class="logo" aria-label="MCS Digital">
-    <span class="logo-mark">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <rect x="1" y="2" width="4" height="18" rx="1" fill="#fff"/>
-        <rect x="17" y="2" width="4" height="18" rx="1" fill="#fff"/>
-        <path d="M5 2 L11 14 L17 2" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="11" cy="17" r="2.5" fill="#fff"/>
-      </svg>
-    </span>
+  <a href="#" class="logo" data-cur aria-label="MCS Digital">
+    <span class="logo-mark"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="2" width="4" height="18" rx="1" fill="#fff"/><rect x="17" y="2" width="4" height="18" rx="1" fill="#fff"/><path d="M5 2 L11 14 L17 2" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="17" r="2.5" fill="#fff"/></svg></span>
     <span class="logo-brand">MCS<span>digital</span></span>
   </a>
   <ul class="nav-links" id="navlinks">
-    <li><a href="#servicos">Serviços</a></li>
-    <li><a href="#como">Como funciona</a></li>
-    <li><a href="#planos">Planos</a></li>
-    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#servicos" data-cur>Serviços</a></li>
+    <li><a href="#como" data-cur>Como funciona</a></li>
+    <li><a href="#planos" data-cur>Planos</a></li>
+    <li><a href="#faq" data-cur>FAQ</a></li>
   </ul>
   <div class="nav-right">
-    <a href="https://wa.me/552176569360?text=Quero%20uma%20demonstra%C3%A7%C3%A3o" class="nav-cta" target="_blank" rel="noopener">Falar agora <svg class="ic"><use href="#i-arrow"/></svg></a>
+    <a href="https://wa.me/552176569360?text=Quero%20uma%20demonstra%C3%A7%C3%A3o" class="nav-cta" data-cur target="_blank" rel="noopener">Falar agora <svg class="ic"><use href="#i-arrow"/></svg></a>
     <div class="hamb" onclick="toggleMenu()" role="button" aria-label="Menu"><span></span><span></span><span></span></div>
   </div>
 </nav>
 
+<div id="sw"><div id="sc">
 <main>
+
 <!-- HERO -->
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="hero-badge"><span class="dot"></span> +150 negócios automatizados <span class="pill">Powered by Claude AI</span></div>
-      <h1>Seu WhatsApp que <span class="g">vende sozinho.</span><br>Seu site que <em>impressiona.</em></h1>
-      <p class="hero-sub">A MCS Digital cria <strong>agentes de IA</strong>, <strong>sites profissionais</strong> e <strong>automações</strong> que atendem, encantam e vendem por você — 24 horas por dia.</p>
-      <div class="hero-cta">
-        <a href="https://wa.me/552176569360?text=Quero%20ver%20funcionando%20ao%20vivo" class="btn btn-primary btn-lg" target="_blank" rel="noopener"><svg class="ic"><use href="#i-phone"/></svg> Ver ao vivo — é grátis</a>
-        <a href="#planos" class="btn btn-light btn-lg">Ver planos e preços</a>
+      <div class="hero-badge reveal"><span class="dot"></span> +150 negócios automatizados <span class="pill">Powered by Claude AI</span></div>
+      <h1><span class="mask"><span>Seu WhatsApp que <span class="g">vende sozinho.</span></span></span><span class="mask"><span>Seu site que <em>impressiona.</em></span></span></h1>
+      <p class="hero-sub reveal">A MCS Digital cria <strong>agentes de IA</strong>, <strong>sites profissionais</strong> e <strong>automações</strong> que atendem, encantam e vendem por você — 24 horas por dia.</p>
+      <div class="hero-cta reveal">
+        <a href="https://wa.me/552176569360?text=Quero%20ver%20funcionando%20ao%20vivo" class="btn btn-primary btn-lg" data-cur data-mag target="_blank" rel="noopener"><svg class="ic"><use href="#i-phone"/></svg> Ver ao vivo — é grátis</a>
+        <a href="#planos" class="btn btn-light btn-lg" data-cur data-mag>Ver planos e preços</a>
       </div>
-      <div class="hero-pills">
+      <div class="hero-pills reveal">
         <span class="hpill"><svg class="ic"><use href="#i-shield"/></svg> 7 dias de garantia</span>
         <span class="hpill"><svg class="ic"><use href="#i-zap"/></svg> No ar em 48h</span>
         <span class="hpill"><svg class="ic"><use href="#i-lock"/></svg> Sem fidelidade</span>
       </div>
     </div>
     <div class="hero-vis">
-      <div class="chip-f cf1">
-        <span class="ci"><svg class="ic"><use href="#i-bot"/></svg></span>
-        <span><b>24h</b><span>atendendo sem parar</span></span>
-      </div>
+      <div class="chip-f cf1"><span class="ci"><svg class="ic"><use href="#i-bot"/></svg></span><span><b>24h</b><span>atendendo sem parar</span></span></div>
       <div class="hero-media">
-        <img src="assets/hero.webp" alt="Escultura 3D de vidro iridescente representando a tecnologia da MCS Digital" width="1200" height="1200" fetchpriority="high">
+        <img src="assets/hero.webp" alt="Escultura 3D de vidro iridescente da MCS Digital" width="1200" height="1200" fetchpriority="high">
         <video id="herovid" muted loop playsinline preload="none" poster="assets/hero.webp" aria-hidden="true"></video>
       </div>
-      <div class="chip-f cf2">
-        <span class="ci"><svg class="ic"><use href="#i-arrowup"/></svg></span>
-        <span><b>+40%</b><span>conversão de leads</span></span>
-      </div>
+      <div class="chip-f cf2"><span class="ci"><svg class="ic"><use href="#i-arrowup"/></svg></span><span><b>+40%</b><span>conversão de leads</span></span></div>
     </div>
   </div>
+  <div class="scroll-hint"><span class="m"></span>Role para explorar</div>
 </section>
 
 <!-- MARQUEE -->
@@ -595,62 +612,57 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
   <div class="marquee"><div class="mq-track" id="mqtrack"></div></div>
 </div>
 
-<!-- SERVIÇOS -->
-<section class="section" id="servicos">
-  <div class="wrap">
-    <div class="center">
-      <div class="eyebrow reveal">O que fazemos</div>
-      <h2 class="h-sec reveal">Três formas de <span class="g">vender mais</span><br>gastando menos tempo.</h2>
-      <p class="sub reveal">Da presença online ao atendimento automático — cuidamos da tecnologia enquanto você foca em fechar negócio.</p>
-    </div>
-    <div class="serv-grid stagger">
-      <div class="tilt"><div class="serv card" data-tilt onclick="abrirPagina('page-ia')" role="button" tabindex="0">
-        <span class="serv-tag">Carro-chefe</span>
-        <div class="serv-vis"><img src="assets/ia.webp" alt="Ícone 3D de balão de conversa em vidro iridescente" loading="lazy" width="640" height="640"></div>
-        <div class="serv-body">
-          <div class="serv-name">Agente de IA</div>
-          <div class="serv-desc">Um vendedor que nunca dorme. Atende, qualifica e captura leads no WhatsApp 24/7 com IA treinada para o seu negócio.</div>
-          <ul class="serv-list">
-            <li><svg class="ic"><use href="#i-check"/></svg> Atendimento 24 horas</li>
-            <li><svg class="ic"><use href="#i-check"/></svg> Modo humano quando quiser</li>
+<!-- SERVIÇOS (PINNED SCROLL SCENE) -->
+<section id="servicos" class="pin-sec" data-pin>
+  <div class="pin-stage">
+    <div class="pin-inner">
+      <div class="pin-visual">
+        <img src="assets/ia.webp" data-i="0" class="on m-show" alt="Balão de conversa 3D em vidro iridescente" loading="lazy">
+        <img src="assets/sites.webp" data-i="1" alt="Camadas de vidro 3D representando um site" loading="lazy">
+        <img src="assets/auto.webp" data-i="2" alt="Engrenagens e nós 3D conectados" loading="lazy">
+      </div>
+      <div class="pin-panel">
+        <div class="pin-item on" data-i="0">
+          <div class="pin-count">01 — Agente de IA</div>
+          <h2 class="pin-name">Um vendedor que <span class="g">nunca dorme.</span></h2>
+          <p class="pin-desc">Atende, qualifica e captura leads no seu WhatsApp 24 horas por dia, com IA treinada para o seu negócio.</p>
+          <ul class="pin-list">
+            <li><svg class="ic"><use href="#i-check"/></svg> Atendimento 24 horas, sem pausa</li>
+            <li><svg class="ic"><use href="#i-check"/></svg> Modo humano: assuma quando quiser</li>
             <li><svg class="ic"><use href="#i-check"/></svg> CRM e notificação de leads</li>
           </ul>
-          <span class="serv-more">Ver detalhes <svg class="ic"><use href="#i-arrow"/></svg></span>
+          <button class="btn btn-light" data-cur data-mag onclick="abrirPagina('page-ia')">Ver detalhes <svg class="ic"><use href="#i-arrow"/></svg></button>
         </div>
-      </div></div>
-      <div class="tilt"><div class="serv card" data-tilt onclick="abrirPagina('page-sites')" role="button" tabindex="0">
-        <span class="serv-tag">Novo</span>
-        <div class="serv-vis"><img src="assets/sites.webp" alt="Ícone 3D de camadas de vidro representando páginas de um site" loading="lazy" width="640" height="640"></div>
-        <div class="serv-body">
-          <div class="serv-name">Criação de Sites</div>
-          <div class="serv-desc">Sites e landing pages que impressionam e passam credibilidade. Rápidos, no Google e feitos para transformar visita em cliente.</div>
-          <ul class="serv-list">
+        <div class="pin-item" data-i="1">
+          <div class="pin-count">02 — Criação de Sites</div>
+          <h2 class="pin-name">Um site que <span class="g">impressiona.</span></h2>
+          <p class="pin-desc">Sites e landing pages que passam credibilidade, aparecem no Google e transformam visita em cliente.</p>
+          <ul class="pin-list">
             <li><svg class="ic"><use href="#i-check"/></svg> Design premium e responsivo</li>
-            <li><svg class="ic"><use href="#i-check"/></svg> Otimizado para o Google</li>
+            <li><svg class="ic"><use href="#i-check"/></svg> Otimizado para o Google (SEO)</li>
             <li><svg class="ic"><use href="#i-check"/></svg> WhatsApp integrado</li>
           </ul>
-          <span class="serv-more">Ver detalhes <svg class="ic"><use href="#i-arrow"/></svg></span>
+          <button class="btn btn-light" data-cur data-mag onclick="abrirPagina('page-sites')">Ver detalhes <svg class="ic"><use href="#i-arrow"/></svg></button>
         </div>
-      </div></div>
-      <div class="tilt"><div class="serv card" data-tilt onclick="abrirPagina('page-auto')" role="button" tabindex="0">
-        <div class="serv-vis"><img src="assets/auto.webp" alt="Ícone 3D de engrenagens e nós conectados" loading="lazy" width="640" height="640"></div>
-        <div class="serv-body">
-          <div class="serv-name">Automações</div>
-          <div class="serv-desc">Tarefas repetitivas no piloto automático. Confirmações, lembretes, follow-ups e integrações rodando sozinhas, sem erro.</div>
-          <ul class="serv-list">
+        <div class="pin-item" data-i="2">
+          <div class="pin-count">03 — Automações</div>
+          <h2 class="pin-name">Seu negócio no <span class="g">piloto automático.</span></h2>
+          <p class="pin-desc">Confirmações, lembretes, follow-ups e integrações rodando sozinhas — sem erro e sem esforço.</p>
+          <ul class="pin-list">
             <li><svg class="ic"><use href="#i-check"/></svg> Fluxos e lembretes automáticos</li>
             <li><svg class="ic"><use href="#i-check"/></svg> Integração com Google Sheets</li>
-            <li><svg class="ic"><use href="#i-check"/></svg> Alertas no seu WhatsApp</li>
+            <li><svg class="ic"><use href="#i-check"/></svg> Alertas direto no seu WhatsApp</li>
           </ul>
-          <span class="serv-more">Ver detalhes <svg class="ic"><use href="#i-arrow"/></svg></span>
+          <button class="btn btn-light" data-cur data-mag onclick="abrirPagina('page-auto')">Ver detalhes <svg class="ic"><use href="#i-arrow"/></svg></button>
         </div>
-      </div></div>
+      </div>
     </div>
+    <div class="pin-dots"><span class="pin-dot on"></span><span class="pin-dot"></span><span class="pin-dot"></span></div>
   </div>
 </section>
 
 <!-- NÚMEROS -->
-<section class="section" style="padding-top:0;">
+<section class="section">
   <div class="wrap">
     <div class="stats reveal">
       <div class="stat"><div class="stat-n">+<b class="count" data-to="150">0</b></div><div class="stat-l">Empresas atendidas</div></div>
@@ -662,11 +674,11 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
 </section>
 
 <!-- COMO FUNCIONA -->
-<section class="section" id="como" style="padding-top:20px;">
+<section class="section" id="como" style="padding-top:10px;">
   <div class="wrap">
     <div class="center">
       <div class="eyebrow reveal">Como funciona</div>
-      <h2 class="h-sec reveal">Do "oi" ao <span class="g">no ar em 48h.</span></h2>
+      <h2 class="h-sec"><span class="mask"><span>Do "oi" ao <span class="g">no ar em 48h.</span></span></span></h2>
       <p class="sub reveal">Processo simples, rápido e sem dor de cabeça. Você acompanha cada passo.</p>
     </div>
     <div class="proc stagger">
@@ -718,7 +730,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
     </div>
     <div>
       <div class="eyebrow reveal">A solução</div>
-      <h2 class="h-sec reveal">Controle total.<br>Resultado <span class="g">em dias.</span></h2>
+      <h2 class="h-sec"><span class="mask"><span>Controle total.</span></span><span class="mask"><span>Resultado <span class="g">em dias.</span></span></span></h2>
       <div class="show-benefits stagger">
         <div class="sb"><div class="sb-ic"><svg class="ic"><use href="#i-bot"/></svg></div><div><div class="sb-t">IA treinada para o seu negócio</div><div class="sb-d">Conhece seus produtos, preços e processos. Responde como um vendedor experiente, 24h por dia.</div></div></div>
         <div class="sb"><div class="sb-ic"><svg class="ic"><use href="#i-target"/></svg></div><div><div class="sb-t">Qualifica e captura leads sozinha</div><div class="sb-d">Identifica interesse real, coleta dados e te notifica. Você entra só quando o lead está pronto pra fechar.</div></div></div>
@@ -766,7 +778,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
   <div class="wrap">
     <div class="center">
       <div class="eyebrow reveal">Resultados reais</div>
-      <h2 class="h-sec reveal">Quem já usa, <span class="g">recomenda.</span></h2>
+      <h2 class="h-sec"><span class="mask"><span>Quem já usa, <span class="g">recomenda.</span></span></span></h2>
       <p class="sub reveal">Empresas reais, resultados reais. Veja o que a MCS Digital fez pelo atendimento delas.</p>
     </div>
     <div class="depo-grid stagger">
@@ -797,7 +809,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
   <div class="wrap">
     <div class="center">
       <div class="eyebrow reveal">Investimento</div>
-      <h2 class="h-sec reveal">Um plano que <span class="g">paga sozinho.</span></h2>
+      <h2 class="h-sec"><span class="mask"><span>Um plano que <span class="g">paga sozinho.</span></span></span></h2>
       <p class="sub reveal">Todos incluem Modo Humano, suporte via WhatsApp e 7 dias de garantia total.</p>
     </div>
     <div class="planos-grid stagger">
@@ -816,7 +828,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
           <li class="no"><span class="chk chk-n"><svg class="ic"><use href="#i-x"/></svg></span>CRM Google Sheets</li>
           <li class="no"><span class="chk chk-n"><svg class="ic"><use href="#i-x"/></svg></span>Relatório mensal</li>
         </ul>
-        <a href="https://wa.me/552176569360?text=Quero%20o%20plano%20Basico" class="btn btn-light" target="_blank" rel="noopener">Quero começar</a>
+        <a href="https://wa.me/552176569360?text=Quero%20o%20plano%20Basico" class="btn btn-light" data-cur data-mag target="_blank" rel="noopener">Quero começar</a>
       </div>
       <div class="plano dest card">
         <div class="plano-badge"><svg class="ic"><use href="#i-star"/></svg> Mais escolhido</div>
@@ -834,7 +846,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
           <li><span class="chk chk-y"><svg class="ic"><use href="#i-check"/></svg></span>Notificação em tempo real</li>
           <li><span class="chk chk-y"><svg class="ic"><use href="#i-check"/></svg></span>Suporte prioritário</li>
         </ul>
-        <a href="https://wa.me/552176569360?text=Quero%20o%20plano%20Profissional" class="btn btn-primary" target="_blank" rel="noopener">Quero o Profissional</a>
+        <a href="https://wa.me/552176569360?text=Quero%20o%20plano%20Profissional" class="btn btn-primary" data-cur data-mag target="_blank" rel="noopener">Quero o Profissional</a>
       </div>
       <div class="plano card">
         <div class="plano-tier">Premium</div>
@@ -851,29 +863,31 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
           <li><span class="chk chk-y"><svg class="ic"><use href="#i-check"/></svg></span>Suporte 7 dias/semana</li>
           <li><span class="chk chk-y"><svg class="ic"><use href="#i-check"/></svg></span>Até 2 números WhatsApp</li>
         </ul>
-        <a href="https://wa.me/552176569360?text=Quero%20o%20plano%20Premium" class="btn btn-light" target="_blank" rel="noopener">Quero o Premium</a>
+        <a href="https://wa.me/552176569360?text=Quero%20o%20plano%20Premium" class="btn btn-light" data-cur data-mag target="_blank" rel="noopener">Quero o Premium</a>
       </div>
     </div>
+    <div class="garantia reveal">
+      <div class="garantia-ic"><svg class="ic"><use href="#i-shield"/></svg></div>
+      <div><h4>Garantia de 7 dias · Entrega em até 48h</h4><p>Se não atender suas expectativas, devolvemos 100% do setup. Sem letras miúdas.</p></div>
+    </div>
   </div>
-  <div class="wrap"><div class="garantia reveal">
-    <div class="garantia-ic"><svg class="ic"><use href="#i-shield"/></svg></div>
-    <div><h4>Garantia de 7 dias · Entrega em até 48h</h4><p>Se não atender suas expectativas, devolvemos 100% do setup. Sem letras miúdas.</p></div>
-  </div></div>
 </section>
 
 <!-- FAQ -->
 <section class="section" id="faq">
-  <div class="wrap center">
-    <div class="eyebrow reveal">Dúvidas frequentes</div>
-    <h2 class="h-sec reveal">Tudo que você precisa <span class="g">saber.</span></h2>
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow reveal">Dúvidas frequentes</div>
+      <h2 class="h-sec"><span class="mask"><span>Tudo que você precisa <span class="g">saber.</span></span></span></h2>
+    </div>
+    <div class="faq-wrap stagger">
+      <div class="faq card"><button class="faq-q" data-cur onclick="toggleFaq(this)">Preciso entender de tecnologia?<svg class="ic"><use href="#i-plus"/></svg></button><div class="faq-a"><p>Não. A gente configura tudo e entrega funcionando. Você só precisa saber usar o WhatsApp — o resto é com a MCS Digital.</p></div></div>
+      <div class="faq card"><button class="faq-q" data-cur onclick="toggleFaq(this)">Em quanto tempo fica pronto?<svg class="ic"><use href="#i-plus"/></svg></button><div class="faq-a"><p>Seu agente ou site fica no ar em até 48 horas após o fechamento e o briefing. Rápido e sem enrolação.</p></div></div>
+      <div class="faq card"><button class="faq-q" data-cur onclick="toggleFaq(this)">O bot usa o meu número de WhatsApp?<svg class="ic"><use href="#i-plus"/></svg></button><div class="faq-a"><p>Sim, funciona no seu próprio número. E com o Modo Humano você assume qualquer conversa a qualquer momento com um comando, e devolve pro bot quando quiser.</p></div></div>
+      <div class="faq card"><button class="faq-q" data-cur onclick="toggleFaq(this)">Vocês criam sites também?<svg class="ic"><use href="#i-plus"/></svg></button><div class="faq-a"><p>Criamos. Sites e landing pages profissionais, rápidos, responsivos e otimizados para o Google — com botão de WhatsApp integrado pra transformar visita em cliente. Fale com a gente pra um orçamento sob medida.</p></div></div>
+      <div class="faq card"><button class="faq-q" data-cur onclick="toggleFaq(this)">E se eu não gostar?<svg class="ic"><use href="#i-plus"/></svg></button><div class="faq-a"><p>Você tem 7 dias de garantia total. Se não atender suas expectativas, devolvemos 100% do valor do setup. E não tem fidelidade: cancele quando quiser.</p></div></div>
+    </div>
   </div>
-  <div class="wrap"><div class="faq-wrap stagger">
-    <div class="faq card"><button class="faq-q" onclick="toggleFaq(this)">Preciso entender de tecnologia?<svg class="ic"><use href="#i-plus"/></svg></button><div class="faq-a"><p>Não. A gente configura tudo e entrega funcionando. Você só precisa saber usar o WhatsApp — o resto é com a MCS Digital.</p></div></div>
-    <div class="faq card"><button class="faq-q" onclick="toggleFaq(this)">Em quanto tempo fica pronto?<svg class="ic"><use href="#i-plus"/></svg></button><div class="faq-a"><p>Seu agente ou site fica no ar em até 48 horas após o fechamento e o briefing. Rápido e sem enrolação.</p></div></div>
-    <div class="faq card"><button class="faq-q" onclick="toggleFaq(this)">O bot usa o meu número de WhatsApp?<svg class="ic"><use href="#i-plus"/></svg></button><div class="faq-a"><p>Sim, funciona no seu próprio número. E com o Modo Humano você assume qualquer conversa a qualquer momento com um comando, e devolve pro bot quando quiser.</p></div></div>
-    <div class="faq card"><button class="faq-q" onclick="toggleFaq(this)">Vocês criam sites também?<svg class="ic"><use href="#i-plus"/></svg></button><div class="faq-a"><p>Criamos. Sites e landing pages profissionais, rápidos, responsivos e otimizados para o Google — com botão de WhatsApp integrado pra transformar visita em cliente. Fale com a gente pra um orçamento sob medida.</p></div></div>
-    <div class="faq card"><button class="faq-q" onclick="toggleFaq(this)">E se eu não gostar?<svg class="ic"><use href="#i-plus"/></svg></button><div class="faq-a"><p>Você tem 7 dias de garantia total. Se não atender suas expectativas, devolvemos 100% do valor do setup. E não tem fidelidade: cancele quando quiser.</p></div></div>
-  </div></div>
 </section>
 
 <!-- CTA -->
@@ -885,7 +899,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
       <p class="sub center">Deixe seu WhatsApp e veja funcionando ao vivo — sem compromisso.</p>
       <div class="cta-form">
         <input class="cta-input" type="tel" inputmode="tel" placeholder="Seu WhatsApp com DDD" id="cta-wpp" aria-label="Seu WhatsApp com DDD">
-        <button class="btn btn-wpp btn-lg" onclick="abrirWpp()"><svg class="ic"><use href="#i-phone"/></svg> Quero ver ao vivo agora</button>
+        <button class="btn btn-wpp btn-lg" data-cur data-mag onclick="abrirWpp()"><svg class="ic"><use href="#i-phone"/></svg> Quero ver ao vivo agora</button>
       </div>
       <p class="cta-note"><svg class="ic"><use href="#i-lock"/></svg> Seus dados estão seguros. Atendemos em minutos.</p>
     </div>
@@ -893,48 +907,41 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
 </section>
 </main>
 
-<!-- FOOTER -->
 <footer>
   <div class="wrap">
     <div class="footer-top">
       <div>
         <div class="footer-brand-row">
-          <span class="logo-mark">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <rect x="1" y="2" width="4" height="18" rx="1" fill="#fff"/>
-              <rect x="17" y="2" width="4" height="18" rx="1" fill="#fff"/>
-              <path d="M5 2 L11 14 L17 2" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="11" cy="17" r="2.5" fill="#fff"/>
-            </svg>
-          </span>
+          <span class="logo-mark"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="2" width="4" height="18" rx="1" fill="#fff"/><rect x="17" y="2" width="4" height="18" rx="1" fill="#fff"/><path d="M5 2 L11 14 L17 2" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="17" r="2.5" fill="#fff"/></svg></span>
           <span class="footer-brand">MCS<span>digital</span></span>
         </div>
         <p class="footer-desc">Agentes de IA, sites e automações para negócios que querem vender mais gastando menos tempo. De Duque de Caxias-RJ para todo o Brasil.</p>
       </div>
       <div class="footer-col">
         <h5>Navegar</h5>
-        <a href="#servicos">Serviços</a>
-        <a href="#como">Como funciona</a>
-        <a href="#planos">Planos</a>
-        <a href="#faq">FAQ</a>
+        <a href="#servicos" data-cur>Serviços</a>
+        <a href="#como" data-cur>Como funciona</a>
+        <a href="#planos" data-cur>Planos</a>
+        <a href="#faq" data-cur>FAQ</a>
       </div>
       <div class="footer-col">
         <h5>Contato</h5>
-        <a href="https://wa.me/552176569360" target="_blank" rel="noopener"><svg class="ic"><use href="#i-phone"/></svg> WhatsApp</a>
-        <a href="mailto:contato@digitalmcs.com.br"><svg class="ic"><use href="#i-mail"/></svg> contato@digitalmcs.com.br</a>
-        <a href="#"><svg class="ic"><use href="#i-pin"/></svg> Duque de Caxias, RJ</a>
+        <a href="https://wa.me/552176569360" data-cur target="_blank" rel="noopener"><svg class="ic"><use href="#i-phone"/></svg> WhatsApp</a>
+        <a href="mailto:contato@digitalmcs.com.br" data-cur><svg class="ic"><use href="#i-mail"/></svg> contato@digitalmcs.com.br</a>
+        <a href="#" data-cur><svg class="ic"><use href="#i-pin"/></svg> Duque de Caxias, RJ</a>
       </div>
     </div>
     <div class="footer-bottom">
       <span>© 2026 MCS Digital — Misael Costa da Silva</span>
-      <a href="https://digitalmcs.com.br">digitalmcs.com.br</a>
+      <a href="https://digitalmcs.com.br" data-cur>digitalmcs.com.br</a>
     </div>
   </div>
 </footer>
+</div></div>
 
 <!-- INTERNAL: IA -->
 <div class="sp" id="page-ia">
-  <div class="sp-head"><button class="sp-back" onclick="fecharPagina()"><svg class="ic"><use href="#i-arrow"/></svg> Voltar</button><span class="logo-brand">MCS<span>digital</span></span></div>
+  <div class="sp-head"><button class="sp-back" data-cur onclick="fecharPagina()"><svg class="ic"><use href="#i-arrow"/></svg> Voltar</button><span class="logo-brand">MCS<span>digital</span></span></div>
   <div class="sp-hero">
     <div class="sp-vis"><img src="assets/ia.webp" alt="Ícone 3D de balão de conversa" loading="lazy"></div>
     <h1 class="sp-title">Atendimento inteligente,<br><span class="g">sem parar nunca.</span></h1>
@@ -957,12 +964,12 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
       <div class="comp comp-depois"><div class="comp-lab"><svg class="ic"><use href="#i-check"/></svg> Com MCS Digital</div><ul class="comp-list"><li><svg class="ic"><use href="#i-check"/></svg>Atende 24h, 7 dias por semana</li><li><svg class="ic"><use href="#i-check"/></svg>Responde com inteligência real</li><li><svg class="ic"><use href="#i-check"/></svg>Follow-up automático — nunca perde venda</li><li><svg class="ic"><use href="#i-check"/></svg>Você foca em fechar, não em responder</li></ul></div>
     </div>
   </div>
-  <div class="sp-cta"><h3>Quer um Agente de IA no seu negócio?</h3><p>Veja uma demonstração ao vivo, sem compromisso.</p><a href="https://wa.me/552176569360?text=Quero%20ver%20o%20Agente%20de%20IA" class="btn btn-wpp btn-lg" target="_blank" rel="noopener"><svg class="ic"><use href="#i-phone"/></svg> Ver demonstração grátis</a></div>
+  <div class="sp-cta"><h3>Quer um Agente de IA no seu negócio?</h3><p>Veja uma demonstração ao vivo, sem compromisso.</p><a href="https://wa.me/552176569360?text=Quero%20ver%20o%20Agente%20de%20IA" class="btn btn-wpp btn-lg" data-cur target="_blank" rel="noopener"><svg class="ic"><use href="#i-phone"/></svg> Ver demonstração grátis</a></div>
 </div>
 
 <!-- INTERNAL: SITES -->
 <div class="sp" id="page-sites">
-  <div class="sp-head"><button class="sp-back" onclick="fecharPagina()"><svg class="ic"><use href="#i-arrow"/></svg> Voltar</button><span class="logo-brand">MCS<span>digital</span></span></div>
+  <div class="sp-head"><button class="sp-back" data-cur onclick="fecharPagina()"><svg class="ic"><use href="#i-arrow"/></svg> Voltar</button><span class="logo-brand">MCS<span>digital</span></span></div>
   <div class="sp-hero">
     <div class="sp-vis"><img src="assets/sites.webp" alt="Ícone 3D de camadas de vidro" loading="lazy"></div>
     <h1 class="sp-title">Um site que <span class="g">impressiona</span><br>e vende por você.</h1>
@@ -985,12 +992,12 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
       <div class="comp comp-depois"><div class="comp-lab"><svg class="ic"><use href="#i-check"/></svg> Com MCS Digital</div><ul class="comp-list"><li><svg class="ic"><use href="#i-check"/></svg>Aparece nas buscas do Google</li><li><svg class="ic"><use href="#i-check"/></svg>Marca profissional que gera confiança</li><li><svg class="ic"><use href="#i-check"/></svg>Vitrine própria funcionando 24h</li><li><svg class="ic"><use href="#i-check"/></svg>Visitantes viram clientes pelo WhatsApp</li></ul></div>
     </div>
   </div>
-  <div class="sp-cta"><h3>Quer um site que impressiona?</h3><p>Peça um orçamento sem compromisso e veja exemplos.</p><a href="https://wa.me/552176569360?text=Quero%20um%20site%20profissional%20com%20a%20MCS%20Digital" class="btn btn-wpp btn-lg" target="_blank" rel="noopener"><svg class="ic"><use href="#i-phone"/></svg> Quero meu site</a></div>
+  <div class="sp-cta"><h3>Quer um site que impressiona?</h3><p>Peça um orçamento sem compromisso e veja exemplos.</p><a href="https://wa.me/552176569360?text=Quero%20um%20site%20profissional%20com%20a%20MCS%20Digital" class="btn btn-wpp btn-lg" data-cur target="_blank" rel="noopener"><svg class="ic"><use href="#i-phone"/></svg> Quero meu site</a></div>
 </div>
 
 <!-- INTERNAL: AUTO -->
 <div class="sp" id="page-auto">
-  <div class="sp-head"><button class="sp-back" onclick="fecharPagina()"><svg class="ic"><use href="#i-arrow"/></svg> Voltar</button><span class="logo-brand">MCS<span>digital</span></span></div>
+  <div class="sp-head"><button class="sp-back" data-cur onclick="fecharPagina()"><svg class="ic"><use href="#i-arrow"/></svg> Voltar</button><span class="logo-brand">MCS<span>digital</span></span></div>
   <div class="sp-hero">
     <div class="sp-vis"><img src="assets/auto.webp" alt="Ícone 3D de engrenagens conectadas" loading="lazy"></div>
     <h1 class="sp-title">Trabalhe menos,<br><span class="g">produza mais.</span></h1>
@@ -1013,87 +1020,280 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:rgba(255,
       <div class="comp comp-depois"><div class="comp-lab"><svg class="ic"><use href="#i-check"/></svg> Com MCS Digital</div><ul class="comp-list"><li><svg class="ic"><use href="#i-check"/></svg>Processos rodando sozinhos 24h</li><li><svg class="ic"><use href="#i-check"/></svg>Zero erros — máquina não esquece</li><li><svg class="ic"><use href="#i-check"/></svg>Tudo centralizado automaticamente</li><li><svg class="ic"><use href="#i-check"/></svg>Follow-up automático — nunca perde venda</li></ul></div>
     </div>
   </div>
-  <div class="sp-cta"><h3>Pronto para automatizar seu negócio?</h3><p>Descubra quais processos podem ser automatizados hoje.</p><a href="https://wa.me/552176569360?text=Quero%20automatizar%20meu%20negocio" class="btn btn-wpp btn-lg" target="_blank" rel="noopener"><svg class="ic"><use href="#i-phone"/></svg> Falar no WhatsApp</a></div>
+  <div class="sp-cta"><h3>Pronto para automatizar seu negócio?</h3><p>Descubra quais processos podem ser automatizados hoje.</p><a href="https://wa.me/552176569360?text=Quero%20automatizar%20meu%20negocio" class="btn btn-wpp btn-lg" data-cur target="_blank" rel="noopener"><svg class="ic"><use href="#i-phone"/></svg> Falar no WhatsApp</a></div>
 </div>
 
-<!-- FLOAT WPP -->
-<a href="https://wa.me/552176569360?text=Quero%20saber%20mais%20sobre%20a%20MCS%20Digital" class="wpp-float" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+<a href="https://wa.me/552176569360?text=Quero%20saber%20mais%20sobre%20a%20MCS%20Digital" class="wpp-float" data-cur target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
   <svg viewBox="0 0 32 32"><path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.5 1.132 6.744 3.054 9.378L1.054 31.2l6.042-1.94A15.9 15.9 0 0016.004 32C24.826 32 32 24.826 32 16.004 32 7.176 24.826 0 16.004 0zm9.3 22.602c-.39 1.1-1.932 2.014-3.17 2.28-.848.18-1.956.324-5.684-1.222-4.772-1.978-7.838-6.834-8.076-7.15-.228-.318-1.924-2.562-1.924-4.888 0-2.326 1.218-3.47 1.65-3.942.39-.426.918-.594 1.218-.594.35 0 .502.004.722.014.31.014.466.032.67.518.256.604.876 2.134.952 2.29.078.156.156.37.056.588-.094.222-.174.358-.33.55-.156.194-.328.432-.468.578-.156.16-.318.334-.136.656.182.318.81 1.338 1.74 2.168 1.194 1.066 2.2 1.396 2.514 1.552.314.156.498.13.68-.078.186-.21.79-.92 1.002-1.236.21-.318.418-.264.706-.158.29.104 1.832.864 2.146 1.022.314.156.524.234.6.364.078.13.078.752-.312 1.852z"/></svg>
 </a>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
+(function(){
+'use strict';
 document.documentElement.classList.add('js');
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const fine=matchMedia('(pointer:fine)').matches;
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 
-/* NAV */
-addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40),{passive:true});
-function toggleMenu(){document.getElementById('navlinks').classList.toggle('open');document.querySelector('.hamb').classList.toggle('open');}
-document.querySelectorAll('#navlinks a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('navlinks').classList.remove('open');document.querySelector('.hamb').classList.remove('open');}));
-document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const h=a.getAttribute('href');if(h.length>1){const t=document.querySelector(h);if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}}}));
+/* ══════ CURSOR ══════ */
+const curEl=document.getElementById('cur'),curD=document.getElementById('curd');
+let mx=innerWidth/2,my=innerHeight/2,cx=mx,cy=my,dx=mx,dy=my;
+if(fine&&!reduce){
+  document.documentElement.classList.add('has-cursor');
+  addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY;},{passive:true});
+  const bind=r=>r.querySelectorAll('[data-cur],a,button').forEach(el=>{
+    el.addEventListener('pointerenter',()=>curEl.classList.add('big'));
+    el.addEventListener('pointerleave',()=>curEl.classList.remove('big'));
+  });
+  bind(document);
+}
 
-/* MARQUEE */
-(function(){const items=['Barbearias','Salões de Beleza','Restaurantes','Clínicas','Lojas de Roupas','Petshops','Academias','Imobiliárias'];
-let h='';for(let k=0;k<2;k++)items.forEach(i=>h+=`<span class="mq-item"><svg class="ic"><use href="#i-spark"/></svg>${i}</span>`);
-document.getElementById('mqtrack').innerHTML=h;})();
-
-/* CTA */
-function abrirWpp(){const n=(document.getElementById('cta-wpp').value||'').trim();const m=n?`Oi! Meu WhatsApp é ${n}. Quero ver funcionando ao vivo!`:'Quero ver funcionando ao vivo!';open(`https://wa.me/552176569360?text=${encodeURIComponent(m)}`,'_blank');}
-document.getElementById('cta-wpp').addEventListener('keypress',e=>{if(e.key==='Enter')abrirWpp();});
-
-/* PAGES */
-function abrirPagina(id){document.getElementById(id).classList.add('active');document.body.style.overflow='hidden';scrollTo(0,0);}
-function fecharPagina(){document.querySelectorAll('.sp').forEach(p=>p.classList.remove('active'));document.body.style.overflow='';}
-addEventListener('keydown',e=>{if(e.key==='Escape')fecharPagina();});
-document.querySelectorAll('.serv[role="button"]').forEach(c=>c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();c.click();}}));
-
-/* FAQ */
-function toggleFaq(b){const f=b.parentElement,a=b.nextElementSibling,open=f.classList.contains('open');
-document.querySelectorAll('.faq').forEach(x=>{x.classList.remove('open');x.querySelector('.faq-a').style.maxHeight=null;});
-if(!open){f.classList.add('open');a.style.maxHeight=a.scrollHeight+'px';}}
-
-/* REVEAL */
-if('IntersectionObserver' in window && !reduce){
-  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const t=en.target;
-    if(t.classList.contains('stagger'))[...t.children].forEach((c,i)=>c.style.transitionDelay=(i*80)+'ms');
-    t.classList.add('vis');io.unobserve(t);}}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
-  document.querySelectorAll('.reveal,.stagger').forEach(el=>io.observe(el));
-}else document.querySelectorAll('.reveal,.stagger').forEach(el=>el.classList.add('vis'));
-
-/* COUNT-UP */
-function countUp(el){const to=+el.dataset.to,dur=1500,t0=performance.now();
-(function s(t){const p=Math.min((t-t0)/dur,1);el.textContent=Math.round((1-Math.pow(1-p,3))*to);if(p<1)requestAnimationFrame(s);})(t0);}
-if('IntersectionObserver' in window){
-  const co=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){reduce?en.target.textContent=en.target.dataset.to:countUp(en.target);co.unobserve(en.target);}}),{threshold:.6});
-  document.querySelectorAll('.count').forEach(el=>co.observe(el));
-}else document.querySelectorAll('.count').forEach(el=>el.textContent=el.dataset.to);
-
-/* 3D TILT */
-if(fine&&!reduce)document.querySelectorAll('[data-tilt]').forEach(el=>{
-  el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
-    el.style.transform=`rotateY(${(px-.5)*10}deg) rotateX(${(.5-py)*10}deg) translateY(-6px)`;});
+/* ══════ MAGNETIC ══════ */
+if(fine&&!reduce)document.querySelectorAll('[data-mag]').forEach(el=>{
+  el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();
+    el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.18}px,${(e.clientY-r.top-r.height/2)*.3}px)`;});
   el.addEventListener('pointerleave',()=>el.style.transform='');
 });
 
-/* PARALLAX ORBS */
-if(!reduce){
-  const orbs=[...document.querySelectorAll('.orb')];
-  let ticking=false;
-  addEventListener('scroll',()=>{if(ticking)return;ticking=true;
-    requestAnimationFrame(()=>{const y=scrollY;orbs.forEach(o=>{o.style.transform=`translateY(${y*(+o.dataset.speed)}px)`;});ticking=false;});
-  },{passive:true});
+/* ══════ NAV / MENU ══════ */
+const nav=document.getElementById('nav'),prog=document.getElementById('prog');
+window.toggleMenu=function(){document.getElementById('navlinks').classList.toggle('open');document.querySelector('.hamb').classList.toggle('open');};
+document.querySelectorAll('#navlinks a').forEach(a=>a.addEventListener('click',()=>{
+  document.getElementById('navlinks').classList.remove('open');document.querySelector('.hamb').classList.remove('open');}));
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+  const h=a.getAttribute('href');if(h.length<2)return;
+  const t=document.querySelector(h);if(!t)return;e.preventDefault();
+  scrollTo({top:t.getBoundingClientRect().top+scrollY,behavior:reduce?'auto':'smooth'});
+}));
+
+/* ══════ MARQUEE ══════ */
+(function(){const it=['Barbearias','Salões de Beleza','Restaurantes','Clínicas','Lojas de Roupas','Petshops','Academias','Imobiliárias'];
+let h='';for(let k=0;k<2;k++)it.forEach(i=>h+=`<span class="mq-item"><svg class="ic"><use href="#i-spark"/></svg>${i}</span>`);
+document.getElementById('mqtrack').innerHTML=h;})();
+
+/* ══════ CTA / PAGES / FAQ ══════ */
+window.abrirWpp=function(){const n=(document.getElementById('cta-wpp').value||'').trim();
+const m=n?`Oi! Meu WhatsApp é ${n}. Quero ver funcionando ao vivo!`:'Quero ver funcionando ao vivo!';
+open(`https://wa.me/552176569360?text=${encodeURIComponent(m)}`,'_blank');};
+document.getElementById('cta-wpp').addEventListener('keypress',e=>{if(e.key==='Enter')abrirWpp();});
+window.abrirPagina=function(id){document.getElementById(id).classList.add('active');document.body.style.overflow='hidden';};
+window.fecharPagina=function(){document.querySelectorAll('.sp').forEach(p=>{p.classList.remove('active');p.scrollTop=0;});document.body.style.overflow='';};
+addEventListener('keydown',e=>{if(e.key==='Escape')fecharPagina();});
+window.toggleFaq=function(b){const f=b.parentElement,a=b.nextElementSibling,op=f.classList.contains('open');
+document.querySelectorAll('.faq').forEach(x=>{x.classList.remove('open');x.querySelector('.faq-a').style.maxHeight=null;});
+if(!op){f.classList.add('open');a.style.maxHeight=a.scrollHeight+'px';}};
+
+/* ══════ REVEAL ══════ */
+if('IntersectionObserver' in window&&!reduce){
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const t=en.target;
+    if(t.classList.contains('stagger'))[...t.children].forEach((c,i)=>c.style.transitionDelay=(i*80)+'ms');
+    t.classList.add('vis');io.unobserve(t);}}),{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal,.stagger,.mask').forEach(el=>io.observe(el));
+}else document.querySelectorAll('.reveal,.stagger,.mask').forEach(el=>el.classList.add('vis'));
+
+/* ══════ COUNT-UP ══════ */
+function countUp(el){const to=+el.dataset.to,dur=1600,t0=performance.now();
+(function s(t){const p=Math.min((t-t0)/dur,1);el.textContent=Math.round((1-Math.pow(1-p,3))*to);if(p<1)requestAnimationFrame(s);})(t0);}
+if('IntersectionObserver' in window){
+  const co=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){
+    reduce?en.target.textContent=en.target.dataset.to:countUp(en.target);co.unobserve(en.target);}}),{threshold:.6});
+  document.querySelectorAll('.count').forEach(el=>co.observe(el));
+}else document.querySelectorAll('.count').forEach(el=>el.textContent=el.dataset.to);
+
+/* ══════ PINNED SERVICES SCENE ══════ */
+const pinSec=document.querySelector('[data-pin]');
+const pinItems=[...document.querySelectorAll('.pin-item')];
+const pinImgs=[...document.querySelectorAll('.pin-visual img')];
+const pinDots=[...document.querySelectorAll('.pin-dot')];
+let pinActive=0,pinProgress=0;
+function setPin(i){
+  if(i===pinActive)return;pinActive=i;
+  pinItems.forEach((e,k)=>e.classList.toggle('on',k===i));
+  pinImgs.forEach((e,k)=>e.classList.toggle('on',k===i));
+  pinDots.forEach((e,k)=>e.classList.toggle('on',k===i));
+}
+function updatePin(y){
+  if(!pinSec)return;
+  const r=pinSec.getBoundingClientRect();
+  const total=r.height-innerHeight;
+  if(total<=0){pinProgress=0;return;}
+  const p=clamp(-r.top/total,0,1);
+  pinProgress=p;
+  setPin(clamp(Math.floor(p*3),0,2));
 }
 
-/* HERO VIDEO (progressive enhancement) */
+/* ══════ WEBGL SCROLL JOURNEY ══════ */
+let glUpdate=null;
 (function(){
-  if(reduce)return;
-  const v=document.getElementById('herovid');
-  const src='assets/hero-loop.mp4';
-  fetch(src,{method:'HEAD'}).then(r=>{
-    if(!r.ok)return;
-    v.src=src;v.load();
-    v.addEventListener('canplay',()=>{v.classList.add('on');v.play().catch(()=>{});},{once:true});
-  }).catch(()=>{});
+  const canvas=document.getElementById('gl');
+  if(reduce||typeof THREE==='undefined'){canvas.style.display='none';return;}
+  let renderer;
+  try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});}
+  catch(e){canvas.style.display='none';return;}
+  const DPR=Math.min(devicePixelRatio,1.75);
+  renderer.setPixelRatio(DPR);
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(52,1,.1,200);
+
+  /* --- iridescent glass shader --- */
+  const glassMat=(cA,cB)=>new THREE.ShaderMaterial({
+    transparent:true,side:THREE.DoubleSide,depthWrite:false,
+    uniforms:{uT:{value:0},uA:{value:new THREE.Color(cA)},uB:{value:new THREE.Color(cB)},uO:{value:1}},
+    vertexShader:`
+      varying vec3 vN;varying vec3 vV;varying vec2 vUv;uniform float uT;
+      void main(){vUv=uv;
+        vec3 p=position;
+        p+=normal*sin(p.x*3.0+uT*.8)*.045;
+        p+=normal*cos(p.y*2.5-uT*.6)*.045;
+        vec4 mv=modelViewMatrix*vec4(p,1.0);
+        vN=normalize(normalMatrix*normal);vV=normalize(-mv.xyz);
+        gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`
+      varying vec3 vN;varying vec3 vV;varying vec2 vUv;
+      uniform vec3 uA;uniform vec3 uB;uniform float uT;uniform float uO;
+      void main(){
+        float f=pow(1.0-abs(dot(normalize(vN),normalize(vV))),1.8);
+        float band=sin(vUv.y*9.0+uT*.5)*.5+.5;
+        vec3 col=mix(uA,uB,clamp(f*1.15+band*.32,0.0,1.0));
+        col+=pow(f,3.0)*.55;
+        float a=(0.16+f*0.8)*uO;
+        gl_FragColor=vec4(col,clamp(a,0.0,1.0));}`
+  });
+
+  /* --- hero knot --- */
+  const knotMat=glassMat('#8B7CFF','#3FE0FF');
+  const knot=new THREE.Mesh(new THREE.TorusKnotGeometry(1.15,.36,180,32),knotMat);
+  knot.position.set(0,.1,-3.2);scene.add(knot);
+
+  /* --- deep rings --- */
+  const ringMat=glassMat('#6D5AE6','#FF9BE4');
+  const rings=new THREE.Group();
+  for(let i=0;i<3;i++){
+    const m=new THREE.Mesh(new THREE.TorusGeometry(2.4+i*.9,.055,16,140),ringMat);
+    m.rotation.x=Math.PI/2.4+i*.32;m.rotation.y=i*.5;rings.add(m);
+  }
+  rings.position.set(0,0,-30);scene.add(rings);
+
+  /* --- final orb --- */
+  const orbMat=glassMat('#57D6F2','#8B7CFF');
+  const orb=new THREE.Mesh(new THREE.IcosahedronGeometry(2.2,4),orbMat);
+  orb.position.set(0,0,-46);scene.add(orb);
+
+  /* --- textured planes (white-keyed) --- */
+  const planeMat=tex=>new THREE.ShaderMaterial({
+    transparent:true,depthWrite:false,
+    uniforms:{uMap:{value:tex},uT:{value:0},uO:{value:1}},
+    vertexShader:`varying vec2 vUv;uniform float uT;
+      void main(){vUv=uv;vec3 p=position;
+        p.z+=sin(p.x*1.4+uT*.7)*.12+cos(p.y*1.2-uT*.5)*.12;
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);}`,
+    fragmentShader:`varying vec2 vUv;uniform sampler2D uMap;uniform float uO;
+      void main(){vec4 t=texture2D(uMap,vUv);
+        float l=dot(t.rgb,vec3(.299,.587,.114));
+        float a=1.0-smoothstep(0.80,0.99,l);
+        gl_FragColor=vec4(t.rgb,a*t.a*uO);}`
+  });
+  const loader=new THREE.TextureLoader();
+  const planes=[];
+  [['assets/ia.webp',-3.1,.7,-13],['assets/sites.webp',3.2,-.5,-19],['assets/auto.webp',-2.9,.4,-25]].forEach(([src,x,y,z])=>{
+    loader.load(src,tex=>{
+      tex.minFilter=THREE.LinearFilter;
+      const m=new THREE.Mesh(new THREE.PlaneGeometry(3.4,3.4,24,24),planeMat(tex));
+      m.position.set(x,y,z);scene.add(m);planes.push(m);
+    },undefined,()=>{});
+  });
+
+  /* --- particles --- */
+  const N=520,pos=new Float32Array(N*3);
+  for(let i=0;i<N;i++){pos[i*3]=(Math.random()-.5)*26;pos[i*3+1]=(Math.random()-.5)*18;pos[i*3+2]=-Math.random()*56+4;}
+  const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  const pts=new THREE.Points(pg,new THREE.PointsMaterial({size:.055,color:0x8B7CFF,transparent:true,opacity:.5,sizeAttenuation:true,depthWrite:false}));
+  scene.add(pts);
+
+  function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+  addEventListener('resize',resize);resize();
+
+  let running=true,t0=performance.now();
+  document.addEventListener('visibilitychange',()=>{running=!document.hidden;});
+  let camX=0,camY=0;
+
+  glUpdate=function(p,y){
+    if(!running)return;
+    const t=(performance.now()-t0)/1000;
+    knotMat.uniforms.uT.value=t;ringMat.uniforms.uT.value=t;orbMat.uniforms.uT.value=t;
+    planes.forEach(m=>m.material.uniforms.uT.value=t);
+
+    /* camera journey */
+    const z=6-p*52;
+    camX=lerp(camX,Math.sin(p*Math.PI*2.1)*2.2+(mx/innerWidth-.5)*1.1,.06);
+    camY=lerp(camY,-p*1.4-(my/innerHeight-.5)*.7,.06);
+    camera.position.set(camX,camY,z);
+    camera.lookAt(0,0,z-8);
+
+    knot.rotation.y=t*.22+p*3.4;knot.rotation.x=t*.13+p*1.5;
+    const ks=1+Math.sin(t*.7)*.03;knot.scale.setScalar(ks);
+    knotMat.uniforms.uO.value=clamp(1-p*3.2,0,1)*.72;
+
+    rings.rotation.z=t*.1+p*1.6;rings.rotation.x=p*.8;
+    orb.rotation.y=t*.16;orb.rotation.x=t*.1;
+    pts.rotation.y=t*.02;
+
+    planes.forEach((m,i)=>{
+      m.rotation.y=Math.sin(t*.3+i)*.28+p*.6;
+      m.rotation.z=Math.cos(t*.22+i)*.09;
+      m.material.uniforms.uO.value=clamp(1-Math.abs((camera.position.z-8)-m.position.z)/16,0,1);
+    });
+    renderer.render(scene,camera);
+  };
+  requestAnimationFrame(()=>canvas.classList.add('on'));
+})();
+
+/* ══════ MAIN LOOP ══════ */
+const docH=()=>Math.max(1,document.documentElement.scrollHeight-innerHeight);
+let sp=0;
+function frame(){
+  try{
+    const y=scrollY;
+    /* lerped scroll progress -> buttery 3D even with native scroll */
+    sp=lerp(sp,clamp(y/docH(),0,1),.075);
+    const p=sp;
+    nav.classList.toggle('scrolled',y>40);
+    prog.style.transform=`scaleX(${p})`;
+    updatePin(y);
+    /* a WebGL failure must never kill the page animations */
+    if(glUpdate){try{glUpdate(p,y);}catch(e){glUpdate=null;const c=document.getElementById('gl');if(c)c.style.display='none';}}
+    if(fine&&!reduce){
+      cx=lerp(cx,mx,.16);cy=lerp(cy,my,.16);dx=lerp(dx,mx,.4);dy=lerp(dy,my,.4);
+      curEl.style.transform=`translate(${cx}px,${cy}px)`;
+      curD.style.transform=`translate(${dx}px,${dy}px)`;
+    }
+  }catch(e){}
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ══════ HERO VIDEO ══════ */
+if(!reduce)fetch('assets/hero-loop.mp4',{method:'HEAD'}).then(r=>{
+  if(!r.ok)return;const v=document.getElementById('herovid');
+  v.src='assets/hero-loop.mp4';v.load();
+  v.addEventListener('canplay',()=>{v.classList.add('on');v.play().catch(()=>{});},{once:true});
+}).catch(()=>{});
+
+/* ══════ PRELOADER ══════ */
+(function(){
+  const pre=document.getElementById('pre'),fill=document.getElementById('prefill'),num=document.getElementById('prenum');
+  let v=0,done=false;
+  const tick=setInterval(()=>{
+    v=Math.min(v+Math.random()*13+4,done?100:92);
+    fill.style.width=v+'%';num.textContent=Math.round(v)+'%';
+    if(v>=100){clearInterval(tick);setTimeout(()=>pre.classList.add('done'),260);}
+  },95);
+  const finish=()=>{done=true;};
+  if(document.readyState==='complete')finish();else addEventListener('load',finish);
+  setTimeout(finish,3500);
+})();
 })();
 </script>
 </body>

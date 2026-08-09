@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only dark">
+<meta name="theme-color" content="#05060A">
+<title>MCS Digital — IA, Sites e Automações que vendem por você</title>
+<meta name="description" content="Agentes de IA, sites profissionais e automações para WhatsApp. Atendimento 24/7, no ar em 48h, 7 dias de garantia. De Duque de Caxias-RJ para todo o Brasil.">
+<link rel="canonical" href="https://digitalmcs.com.br/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="MCS Digital">
+<meta property="og:url" content="https://digitalmcs.com.br/">
+<meta property="og:title" content="MCS Digital — IA, Sites e Automações">
+<meta property="og:description" content="Seu WhatsApp que vende sozinho e seu site que impressiona. No ar em 48h.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MCS Digital — IA, Sites e Automações">
+<meta name="twitter:description" content="Seu WhatsApp que vende sozinho e seu site que impressiona. No ar em 48h.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ProfessionalService","name":"MCS Digital",
+"description":"Agentes de IA, automação de WhatsApp e criação de sites e dashboards para pequenos negócios.",
+"url":"https://digitalmcs.com.br/","email":"contato@digitalmcs.com.br",
+"telephone":"+552176569360","areaServed":"BR","priceRange":"$$",
+"address":{"@type":"PostalAddress","addressLocality":"Duque de Caxias","addressRegion":"RJ","addressCountry":"BR"}}
+</script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#05060A; --bg2:#0A0C12;
+  --ink:#EEF2F7; --dim:#8A94A6; --dim2:#4E5768;
+  --cy:#22E1FF; --cy2:#0090FF; --cyd:#0B4F63;
+  --line:rgba(238,242,247,.10);
+  --e:cubic-bezier(.22,1,.36,1);
+  --max:1240px;
+}
+html{background:var(--bg);color-scheme:only dark;-webkit-font-smoothing:antialiased;}
+body{
+  background:var(--bg) !important;color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;line-height:1.6;overflow-x:hidden;
+}
+@media(prefers-color-scheme:light){html,body{background:var(--bg)!important;color:var(--ink)!important;}}
+::selection{background:var(--cy);color:#04121A;}
+img,canvas,svg{display:block;max-width:100%;}
+h1,h2,h3{font-family:'Space Grotesk',system-ui,sans-serif;font-weight:700;letter-spacing:-.035em;line-height:1;}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 clamp(20px,4vw,44px);}
+
+/* ── átomos ── */
+.tag{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:.72rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--cy);
+  border:1px solid rgba(34,225,255,.28);background:rgba(34,225,255,.06);
+  padding:8px 15px;border-radius:99px;
+}
+.tag i{width:6px;height:6px;border-radius:50%;background:var(--cy);box-shadow:0 0 10px var(--cy);}
+.btn{
+  position:relative;display:inline-flex;align-items:center;gap:11px;
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;
+  padding:18px 30px;border-radius:99px;border:0;cursor:pointer;
+  background:linear-gradient(100deg,var(--cy),var(--cy2));color:#03151C;
+  box-shadow:0 0 0 rgba(34,225,255,0);
+  transition:box-shadow .45s var(--e),transform .2s linear;
+}
+.btn:hover{box-shadow:0 12px 44px -8px rgba(34,225,255,.6);}
+.btn svg{width:19px;height:19px;fill:currentColor;}
+.btn--ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px rgba(238,242,247,.26);}
+.btn--ghost:hover{box-shadow:inset 0 0 0 1px rgba(34,225,255,.5);}
+
+/* ── camadas ── */
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.6s var(--e);}
+#gl.on{opacity:1;}
+.grain{
+  position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1.1s steps(3) infinite;
+}
+@keyframes grain{0%{background-position:0 0}33%{background-position:-30px 20px}66%{background-position:20px -18px}100%{background-position:0 0}}
+.noGL .grain{opacity:.03;}
+main{position:relative;z-index:2;}
+
+/* ── cursor ── */
+.cur,.curDot{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;border-radius:50%;display:none;}
+.cur{width:34px;height:34px;border:1px solid rgba(34,225,255,.6);transition:width .3s var(--e),height .3s var(--e),background .3s,border-color .3s;}
+.curDot{width:5px;height:5px;background:var(--cy);}
+.cur.on{width:64px;height:64px;background:rgba(34,225,255,.1);border-color:var(--cy);}
+@media(hover:hover) and (pointer:fine){.cur,.curDot{display:block;}}
+
+/* ── carregamento ── */
+.boot{
+  position:fixed;inset:0;z-index:9998;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+  transition:opacity .8s var(--e),visibility .8s;
+}
+.boot.done{opacity:0;visibility:hidden;pointer-events:none;}
+.boot__m{font-family:'Space Grotesk',sans-serif;font-size:clamp(3rem,11vw,7rem);font-weight:700;letter-spacing:.02em;}
+.boot__m span{color:var(--cy);}
+.boot__bar{width:min(200px,54vw);height:2px;background:rgba(238,242,247,.12);overflow:hidden;border-radius:2px;}
+.boot__f{height:100%;width:0;background:var(--cy);box-shadow:0 0 12px var(--cy);}
+.boot__p{font-size:.72rem;letter-spacing:.2em;color:var(--dim2);}
+
+/* ── topo ── */
+.nav{
+  position:fixed;top:0;left:0;width:100%;z-index:900;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:clamp(14px,2vw,22px) clamp(20px,4vw,44px);
+  transition:background .5s var(--e),backdrop-filter .5s;
+}
+.nav.solid{background:rgba(5,6,10,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+.mcs{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.32rem;letter-spacing:.06em;line-height:1;}
+.mcs b{font-weight:700;}
+.mcs i{font-style:normal;color:var(--cy);}
+.mcs small{display:block;font-family:'Inter',sans-serif;font-size:.5rem;font-weight:500;letter-spacing:.42em;color:var(--dim2);margin-top:3px;}
+.nav__l{display:flex;align-items:center;gap:clamp(14px,2vw,30px);}
+.nav__l a{font-size:.86rem;color:var(--dim);transition:color .3s;}
+.nav__l a:hover{color:var(--cy);}
+.nav__cta{
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.86rem;
+  padding:11px 20px;border-radius:99px;background:var(--cy);color:#03151C;
+  transition:box-shadow .4s var(--e);
+}
+.nav__cta:hover{box-shadow:0 0 30px -4px rgba(34,225,255,.75);}
+
+/* ── cenas ── */
+.scene{position:relative;padding:clamp(90px,16vh,190px) 0;}
+.scene--hero{min-height:100svh;display:flex;align-items:center;padding-top:clamp(90px,14vh,150px);}
+.scene--hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(102deg,rgba(5,6,10,.94) 0%,rgba(5,6,10,.78) 30%,rgba(5,6,10,.25) 52%,transparent 68%);}
+@media(max-width:900px){
+  .scene--hero::before{background:linear-gradient(180deg,rgba(5,6,10,.12) 0%,rgba(5,6,10,.48) 24%,rgba(5,6,10,.93) 42%,rgba(5,6,10,.97) 100%);}
+}
+.scene--hero .wrap{position:relative;z-index:1;}
+.eyebrow{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim2);}
+
+/* hero */
+.hero__mcs{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;
+  font-size:clamp(5.5rem,25vw,20rem);line-height:.8;letter-spacing:-.03em;
+  margin:clamp(18px,3vh,34px) 0 clamp(14px,2vh,26px);
+}
+.hero__mcs i{font-style:normal;color:transparent;-webkit-text-stroke:2px var(--cy);}
+.hero__sub{font-size:clamp(1.05rem,2vw,1.6rem);font-weight:500;max-width:24ch;color:var(--ink);font-family:'Space Grotesk',sans-serif;letter-spacing:-.02em;line-height:1.25;}
+.hero__lead{color:var(--dim);max-width:46ch;margin-top:16px;font-size:1rem;}
+.hero__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:clamp(26px,4vh,40px);}
+.hero__facts{display:flex;gap:clamp(18px,3vw,40px);flex-wrap:wrap;margin-top:clamp(30px,5vh,52px);}
+.hero__facts div b{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.45rem;font-weight:700;letter-spacing:-.03em;}
+.hero__facts div span{font-size:.76rem;color:var(--dim2);letter-spacing:.06em;}
+.scrollcue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:9px;color:var(--dim2);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;}
+.scrollcue i{width:1px;height:34px;background:linear-gradient(var(--cy),transparent);}
+
+/* manifesto */
+.mani{font-size:clamp(1.9rem,5.4vw,4.4rem);letter-spacing:-.04em;line-height:1.06;max-width:19ch;}
+.mani em{font-style:normal;color:var(--cy);}
+.mani__note{color:var(--dim);max-width:44ch;margin-top:clamp(22px,4vh,40px);}
+
+/* palavras animadas */
+.w{display:inline-block;overflow:hidden;vertical-align:top;}
+.w>span{display:inline-block;will-change:transform;}
+
+/* serviços */
+.svcs{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.6vw,22px);margin-top:clamp(36px,6vh,64px);}
+.svc{
+  position:relative;overflow:hidden;border-radius:22px;padding:clamp(24px,2.6vw,34px);
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+  border:1px solid var(--line);display:flex;flex-direction:column;min-height:340px;
+  transition:border-color .5s var(--e),transform .5s var(--e);
+}
+.svc:hover{border-color:rgba(34,225,255,.4);transform:translateY(-5px);}
+.svc__glow{position:absolute;inset:0;opacity:0;transition:opacity .5s;pointer-events:none;
+  background:radial-gradient(340px circle at var(--mx,50%) var(--my,0%),rgba(34,225,255,.16),transparent 70%);}
+.svc:hover .svc__glow{opacity:1;}
+.svc__ico{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;
+  background:rgba(34,225,255,.09);border:1px solid rgba(34,225,255,.22);color:var(--cy);}
+.svc__ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.svc__n{font-size:clamp(1.25rem,1.7vw,1.5rem);margin:22px 0 10px;}
+.svc__d{color:var(--dim);font-size:.95rem;flex:1;}
+.svc__ul{list-style:none;margin-top:20px;display:flex;flex-direction:column;gap:9px;}
+.svc__ul li{font-size:.86rem;color:var(--dim);display:flex;gap:9px;align-items:flex-start;}
+.svc__ul li::before{content:'';width:14px;height:14px;flex-shrink:0;margin-top:3px;border-radius:50%;
+  background:rgba(34,225,255,.14) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322E1FF' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center/9px no-repeat;}
+
+/* prova */
+.why{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2vw,28px);margin-top:clamp(36px,6vh,64px);}
+.why__b{border:1px solid var(--line);border-radius:20px;padding:clamp(22px,2.4vw,32px);background:rgba(255,255,255,.02);}
+.why__b h3{font-size:1.12rem;margin-bottom:9px;}
+.why__b p{color:var(--dim);font-size:.93rem;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.6vw,20px);margin-top:clamp(28px,4vh,44px);}
+.stat{border-top:1px solid var(--line);padding-top:16px;}
+.stat b{display:block;font-family:'Space Grotesk',sans-serif;font-size:clamp(1.8rem,3.4vw,2.8rem);font-weight:700;letter-spacing:-.04em;line-height:1;}
+.stat span{font-size:.78rem;color:var(--dim2);}
+.cmds{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;}
+.cmd{font-family:'Space Grotesk',sans-serif;font-size:.82rem;color:var(--cy);
+  border:1px solid rgba(34,225,255,.26);background:rgba(34,225,255,.06);padding:7px 13px;border-radius:8px;}
+
+/* CTA */
+.end{position:relative;text-align:center;padding:clamp(100px,20vh,220px) 0;}
+.end{overflow:hidden;}
+.end::before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(900px,100vw);height:min(900px,100vw);pointer-events:none;
+  background:radial-gradient(circle,rgba(34,225,255,.16),transparent 62%);}
+.end::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 46%,rgba(5,6,10,.9) 0%,rgba(5,6,10,.66) 40%,transparent 72%);}
+.end__in{position:relative;z-index:1;}
+.end h2{font-size:clamp(2.1rem,6.4vw,5rem);letter-spacing:-.04em;max-width:16ch;margin:20px auto 18px;}
+.end p{color:var(--dim);max-width:44ch;margin:0 auto 34px;}
+.end__note{margin-top:20px;font-size:.78rem;color:var(--dim2);}
+
+/* rodapé */
+.foot{border-top:1px solid var(--line);padding:clamp(34px,5vh,56px) 0 30px;position:relative;z-index:2;
+  background:linear-gradient(180deg,rgba(5,6,10,.82),var(--bg) 40%);}
+.foot__g{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:clamp(24px,4vw,56px);}
+.foot h4{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim2);margin-bottom:14px;font-family:'Inter',sans-serif;font-weight:600;}
+.foot a,.foot p{display:block;color:var(--dim);font-size:.9rem;line-height:2;transition:color .3s;}
+.foot a:hover{color:var(--cy);}
+.foot__b{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:36px;padding-top:22px;border-top:1px solid var(--line);font-size:.78rem;color:var(--dim2);}
+
+/* whatsapp fixo */
+.wfab{
+  position:fixed;right:18px;bottom:18px;z-index:950;display:flex;align-items:center;gap:10px;
+  background:var(--cy);color:#03151C;padding:14px 20px;border-radius:99px;
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.88rem;
+  box-shadow:0 14px 40px -12px rgba(34,225,255,.7);
+  transform:translateY(110px);transition:transform .6s var(--e);
+}
+.wfab.show{transform:none;}
+.wfab svg{width:19px;height:19px;fill:currentColor;}
+
+/* entradas */
+.rv{opacity:0;transform:translateY(28px);}
+.noJS .rv,.noMotion .rv{opacity:1;transform:none;}
+
+@media(max-width:900px){
+  .svcs{grid-template-columns:1fr;}
+  .why{grid-template-columns:1fr;}
+  .stats{grid-template-columns:1fr 1fr;}
+  .foot__g{grid-template-columns:1fr;}
+  .nav__l a:not(.nav__cta){display:none;}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;}
+  .rv{opacity:1!important;transform:none!important;}
+  .boot{display:none!important;}
+  .grain{display:none;}
+}
+</style>
+</head>
+<body>
+<noscript><style>.rv{opacity:1!important;transform:none!important;}.boot{display:none!important;}</style></noscript>
+
+<div class="boot" id="boot" aria-hidden="true">
+  <div class="boot__m">MC<span>S</span></div>
+  <div class="boot__bar"><div class="boot__f" id="bootF"></div></div>
+  <div class="boot__p" id="bootP">0%</div>
+</div>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="cur" id="cur" aria-hidden="true"></div>
+<div class="curDot" id="curDot" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="mcs" href="#topo" aria-label="MCS Digital"><b>MC<i>S</i></b><small>DIGITAL</small></a>
+  <nav class="nav__l">
+    <a href="#servicos">Serviços</a>
+    <a href="#diferencial">Diferencial</a>
+    <a href="#contato">Contato</a>
+    <a class="nav__cta" data-magnet href="https://wa.me/552176569360?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20a%20MCS%20Digital." target="_blank" rel="noopener">Falar agora</a>
+  </nav>
+</header>
+
+<main id="topo">
+
+  <!-- CENA 1 -->
+  <section class="scene scene--hero">
+    <div class="wrap">
+      <span class="tag rv"><i></i>+150 negócios automatizados</span>
+      <h1 class="hero__mcs" data-split>MC<i>S</i></h1>
+      <p class="hero__sub rv">Inteligência e automação para o seu negócio.</p>
+      <p class="hero__lead rv">Agentes de IA, automação no WhatsApp e sites que atendem, qualificam e vendem por você — 24 horas por dia.</p>
+      <div class="hero__cta rv">
+        <a class="btn" data-magnet href="https://wa.me/552176569360?text=Ol%C3%A1!%20Quero%20ver%20uma%20demonstra%C3%A7%C3%A3o%20ao%20vivo." target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1s-.5-.1-.7.1-.8 1-1 1.2-.3.2-.6.1c-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2-.2-.3 0-.5.1-.6l.5-.5.3-.5c.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4s-1 1-1 2.5 1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4s-.3-.2-.6-.4z"/><path d="M12 0C5.5 0 .2 5.3.2 11.9c0 2.1.5 4.1 1.6 5.9L0 24l6.3-1.7c1.7.9 3.6 1.4 5.7 1.4 6.6 0 11.9-5.3 11.9-11.9S18.6 0 12 0z"/></svg>
+          Ver demonstração ao vivo
+        </a>
+        <a class="btn btn--ghost" data-magnet href="#servicos">O que fazemos</a>
+      </div>
+      <div class="hero__facts rv">
+        <div><b>48h</b><span>do briefing ao ar</span></div>
+        <div><b>24/7</b><span>atendendo sem parar</span></div>
+        <div><b>+40%</b><span>conversão de leads</span></div>
+      </div>
+    </div>
+    <div class="scrollcue" aria-hidden="true"><i></i>Role</div>
+  </section>
+
+  <!-- CENA 2 -->
+  <section class="scene">
+    <div class="wrap">
+      <span class="eyebrow rv">Manifesto</span>
+      <h2 class="mani" data-split style="margin-top:20px">Seu negócio não precisa de mais horas. Precisa de <em>inteligência trabalhando sozinha.</em></h2>
+      <p class="mani__note rv">Enquanto você dorme, o cliente pergunta. Enquanto você atende um, três desistem. A MCS Digital coloca IA e automação onde hoje existe espera — e transforma tempo perdido em venda fechada.</p>
+    </div>
+  </section>
+
+  <!-- CENA 3 -->
+  <section class="scene" id="servicos">
+    <div class="wrap">
+      <span class="eyebrow rv">O que fazemos</span>
+      <h2 class="mani" data-split style="margin-top:18px;max-width:16ch">Três frentes. Um resultado.</h2>
+      <div class="svcs">
+        <article class="svc rv" data-tilt>
+          <span class="svc__glow"></span>
+          <div class="svc__ico"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M9 12h.01M15 12h.01M9.5 16h5"/><path d="M2 12h2M20 12h2"/></svg></div>
+          <h3 class="svc__n">Agentes de IA</h3>
+          <p class="svc__d">Um vendedor que nunca dorme. Atende, qualifica e captura leads no seu WhatsApp com IA treinada para o seu negócio.</p>
+          <ul class="svc__ul">
+            <li>Atendimento 24 horas, sem pausa</li>
+            <li>Modo humano: assuma quando quiser</li>
+            <li>CRM e notificação de leads</li>
+          </ul>
+        </article>
+        <article class="svc rv" data-tilt>
+          <span class="svc__glow"></span>
+          <div class="svc__ico"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.7 8.7 0 0 1-4-1L3 20.5l1.6-4.7A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/><path d="M8.5 10.5c.4 1.8 2.2 3.6 4 4"/></svg></div>
+          <h3 class="svc__n">Automação no WhatsApp</h3>
+          <p class="svc__d">Seu negócio no piloto automático. Confirmações, lembretes, follow-ups e integrações rodando sozinhas.</p>
+          <ul class="svc__ul">
+            <li>Fluxos e lembretes automáticos</li>
+            <li>Integração com Google Sheets</li>
+            <li>Alertas direto no seu WhatsApp</li>
+          </ul>
+        </article>
+        <article class="svc rv" data-tilt>
+          <span class="svc__glow"></span>
+          <div class="svc__ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 21h8M12 18v3"/><path d="M7 13l2.5-2.5L12 13l3-3"/></svg></div>
+          <h3 class="svc__n">Sites e dashboards</h3>
+          <p class="svc__d">Sites que passam credibilidade, aparecem no Google e transformam visita em cliente — com painel de dados em tempo real.</p>
+          <ul class="svc__ul">
+            <li>Design premium e responsivo</li>
+            <li>Otimizado para o Google (SEO)</li>
+            <li>Painel de leads e conversões</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CENA 4 -->
+  <section class="scene" id="diferencial">
+    <div class="wrap">
+      <span class="eyebrow rv">Por que a MCS</span>
+      <h2 class="mani" data-split style="margin-top:18px;max-width:15ch">Feito sob medida. Entregue em 48h.</h2>
+      <div class="why">
+        <div class="why__b rv"><h3>IA treinada para o seu negócio</h3><p>Conhece seus produtos, preços e processos. Responde como um vendedor experiente, não como um robô genérico.</p></div>
+        <div class="why__b rv"><h3>Você no controle, quando precisar</h3><p>Assuma qualquer conversa pelo mesmo número com um comando — e devolva para o bot quando terminar.</p>
+          <div class="cmds"><span class="cmd">!assumir</span><span class="cmd">!bot</span><span class="cmd">!leads</span></div>
+        </div>
+        <div class="why__b rv"><h3>Dados em tempo real</h3><p>Atendimentos, leads e conversões ao vivo no painel. Decisões com dados, não com achismo.</p></div>
+        <div class="why__b rv"><h3>Sem fidelidade, com garantia</h3><p>7 dias de garantia total sobre o setup. Cancele quando quiser, sem letras miúdas.</p></div>
+      </div>
+      <div class="stats">
+        <div class="stat rv"><b data-count="150" data-suf="+">0</b><span>Empresas atendidas</span></div>
+        <div class="stat rv"><b data-count="24" data-suf="h">0</b><span>Atendimento ativo</span></div>
+        <div class="stat rv"><b data-count="40" data-pre="+" data-suf="%">0</b><span>Conversão de leads</span></div>
+        <div class="stat rv"><b data-count="48" data-suf="h">0</b><span>Do briefing ao ar</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CENA 5 -->
+  <section class="scene end" id="contato">
+    <div class="wrap end__in">
+      <span class="tag rv"><i></i>No ar em até 48h</span>
+      <h2 data-split>Pronto para vender enquanto dorme?</h2>
+      <p class="rv">Chame no WhatsApp e veja funcionando ao vivo — sem compromisso.</p>
+      <a class="btn rv" data-magnet href="https://wa.me/552176569360?text=Ol%C3%A1!%20Quero%20ver%20a%20demonstra%C3%A7%C3%A3o%20ao%20vivo%20da%20MCS%20Digital." target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1s-.5-.1-.7.1-.8 1-1 1.2-.3.2-.6.1c-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2-.2-.3 0-.5.1-.6l.5-.5.3-.5c.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4s-1 1-1 2.5 1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4s-.3-.2-.6-.4z"/><path d="M12 0C5.5 0 .2 5.3.2 11.9c0 2.1.5 4.1 1.6 5.9L0 24l6.3-1.7c1.7.9 3.6 1.4 5.7 1.4 6.6 0 11.9-5.3 11.9-11.9S18.6 0 12 0z"/></svg>
+        Quero ver ao vivo agora
+      </a>
+      <p class="end__note rv">Seus dados estão seguros. Atendemos em minutos.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__g">
+      <div>
+        <span class="mcs"><b>MC<i>S</i></b><small>DIGITAL</small></span>
+        <p style="max-width:34ch;margin-top:16px">Agentes de IA, automação no WhatsApp e sites para negócios que querem vender mais gastando menos tempo. De Duque de Caxias-RJ para todo o Brasil.</p>
+      </div>
+      <div>
+        <h4>Navegar</h4>
+        <a href="#servicos">Serviços</a>
+        <a href="#diferencial">Diferencial</a>
+        <a href="#contato">Contato</a>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <a href="https://wa.me/552176569360?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20a%20MCS%20Digital." target="_blank" rel="noopener">WhatsApp</a>
+        <a href="mailto:contato@digitalmcs.com.br">contato@digitalmcs.com.br</a>
+        <p>Duque de Caxias, RJ</p>
+      </div>
+    </div>
+    <div class="foot__b">
+      <span>© <span id="yr">2026</span> MCS Digital — Misael Costa da Silva</span>
+      <span>digitalmcs.com.br</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wfab" id="wfab" data-magnet href="https://wa.me/552176569360?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20a%20MCS%20Digital." target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1s-.5-.1-.7.1-.8 1-1 1.2-.3.2-.6.1c-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2-.2-.3 0-.5.1-.6l.5-.5.3-.5c.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4s-1 1-1 2.5 1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4s-.3-.2-.6-.4z"/><path d="M12 0C5.5 0 .2 5.3.2 11.9c0 2.1.5 4.1 1.6 5.9L0 24l6.3-1.7c1.7.9 3.6 1.4 5.7 1.4 6.6 0 11.9-5.3 11.9-11.9S18.6 0 12 0z"/></svg>
+  WhatsApp
+</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+<script>
+(function(){
+'use strict';
+var D=document, W=window;
+try{D.documentElement.className+=' jsok';}catch(e){}
+function $(id){return D.getElementById(id);}
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+function lerp(a,b,t){return a+(b-a)*t;}
+var mq=W.matchMedia?W.matchMedia.bind(W):null;
+var reduce=mq?mq('(prefers-reduced-motion:reduce)').matches:false;
+var fine=mq?mq('(hover:hover) and (pointer:fine)').matches:false;
+var small=W.innerWidth<820;
+if(reduce)D.documentElement.classList.add('noMotion');
+var y=$('yr'); if(y)y.textContent=new Date().getFullYear();
+
+var scrollP=0;      /* progresso 0..1 da pagina, alimenta a camera */
+var mouse={x:0,y:0};
+
+/* ═══════════ CARREGAMENTO ═══════════ */
+(function(){
+  var b=$('boot'),f=$('bootF'),p=$('bootP');
+  if(!b)return;
+  if(reduce){b.classList.add('done');return;}
+  var v=0,done=false,iv=setInterval(function(){
+    v=Math.min(v+4+Math.random()*10,96);
+    f.style.width=v+'%'; p.textContent=Math.round(v)+'%';
+  },95);
+  function go(){
+    if(done)return;done=true;clearInterval(iv);
+    f.style.width='100%';p.textContent='100%';
+    setTimeout(function(){b.classList.add('done');},380);
+  }
+  if(D.readyState==='complete')setTimeout(go,450);
+  else W.addEventListener('load',function(){setTimeout(go,350);});
+  setTimeout(go,3200);
+})();
+
+/* ═══════════ CURSOR COM MAGNETISMO ═══════════ */
+(function(){
+  var ring=$('cur'),dot=$('curDot');
+  if(!ring||!fine||reduce)return;
+  var mx=0,my=0,rx=0,ry=0,dx=0,dy=0;
+  W.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;},{passive:true});
+  var mags=D.querySelectorAll('[data-magnet]');
+  for(var i=0;i<mags.length;i++)(function(el){
+    el.addEventListener('mousemove',function(e){
+      var r=el.getBoundingClientRect();
+      var ox=(e.clientX-(r.left+r.width/2))*.28;
+      var oy=(e.clientY-(r.top+r.height/2))*.4;
+      el.style.transform='translate('+ox.toFixed(1)+'px,'+oy.toFixed(1)+'px)';
+    });
+    el.addEventListener('mouseleave',function(){el.style.transform='';});
+  })(mags[i]);
+  D.addEventListener('mouseover',function(e){
+    var t=e.target.closest?e.target.closest('a,button,.svc'):null;
+    ring.classList.toggle('on',!!t);
+  });
+  (function tick(){
+    requestAnimationFrame(tick);
+    rx=lerp(rx,mx,.14); ry=lerp(ry,my,.14);
+    dx=lerp(dx,mx,.42); dy=lerp(dy,my,.42);
+    ring.style.transform='translate('+rx.toFixed(1)+'px,'+ry.toFixed(1)+'px) translate(-50%,-50%)';
+    dot.style.transform='translate('+dx.toFixed(1)+'px,'+dy.toFixed(1)+'px) translate(-50%,-50%)';
+  })();
+})();
+
+/* ═══════════ SCROLL SUAVE + COREOGRAFIA ═══════════ */
+function motion(){
+  var hasG=(typeof gsap!=='undefined'&&typeof ScrollTrigger!=='undefined');
+  var nav=$('nav'), wfab=$('wfab');
+
+  /* quebra os titulos em palavras para a entrada escalonada */
+  var sp=D.querySelectorAll('[data-split]');
+  for(var s=0;s<sp.length;s++){
+    var el=sp[s];
+    if(el.dataset.done)continue;
+    var html=el.innerHTML.split(/(<[^>]+>)/);
+    var out='',inTag=false;
+    for(var k=0;k<html.length;k++){
+      var chunk=html[k];
+      if(/^<[^>]+>$/.test(chunk)){out+=chunk;continue;}
+      var words=chunk.split(/(\s+)/);
+      for(var w=0;w<words.length;w++){
+        if(!words[w])continue;
+        if(/^\s+$/.test(words[w])){out+=' ';continue;}
+        out+='<span class="w"><span>'+words[w]+'</span></span>';
+      }
+    }
+    el.innerHTML=out; el.dataset.done='1';
+  }
+
+  if(reduce||!hasG){
+    var rv=D.querySelectorAll('.rv');
+    for(var r=0;r<rv.length;r++){rv[r].style.opacity=1;rv[r].style.transform='none';}
+    var ws=D.querySelectorAll('.w>span');
+    for(var q=0;q<ws.length;q++)ws[q].style.transform='none';
+    var cs=D.querySelectorAll('[data-count]');
+    for(var c=0;c<cs.length;c++){var n=cs[c];
+      n.textContent=(n.dataset.pre||'')+n.dataset.count+(n.dataset.suf||'');}
+    W.addEventListener('scroll',function(){
+      var yy=W.pageYOffset||0;
+      scrollP=clamp(yy/Math.max(1,D.body.scrollHeight-W.innerHeight),0,1);
+      if(nav)nav.classList.toggle('solid',yy>40);
+      if(wfab)wfab.classList.toggle('show',yy>W.innerHeight*.6);
+    },{passive:true});
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* Lenis: rolagem com inercia acoplada ao ScrollTrigger */
+  if(typeof Lenis!=='undefined'){
+    var lenis=new Lenis({duration:1.05,smoothWheel:true,touchMultiplier:1.6});
+    lenis.on('scroll',ScrollTrigger.update);
+    gsap.ticker.add(function(t){lenis.raf(t*1000);});
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  /* progresso global -> camera e particulas */
+  ScrollTrigger.create({
+    start:0,end:'max',
+    onUpdate:function(self){scrollP=self.progress;},
+    onRefresh:function(self){scrollP=self.progress;}
+  });
+  function chrome(){
+    var yy=W.pageYOffset||D.documentElement.scrollTop||0;
+    if(nav)nav.classList.toggle('solid',yy>40);
+    if(wfab)wfab.classList.toggle('show',yy>W.innerHeight*.6);
+  }
+  chrome(); W.addEventListener('scroll',chrome,{passive:true});
+
+  /* palavras sobem */
+  gsap.utils.toArray('[data-split]').forEach(function(el){
+    gsap.set(el.querySelectorAll('.w>span'),{yPercent:112});
+    gsap.to(el.querySelectorAll('.w>span'),{
+      yPercent:0,duration:1.05,ease:'expo.out',stagger:.045,
+      scrollTrigger:{trigger:el,start:'top 88%'}
+    });
+  });
+  /* blocos entram */
+  gsap.utils.toArray('.rv').forEach(function(el,i){
+    gsap.to(el,{opacity:1,y:0,duration:.95,ease:'expo.out',
+      scrollTrigger:{trigger:el,start:'top 90%'}});
+  });
+  /* contadores */
+  gsap.utils.toArray('[data-count]').forEach(function(el){
+    var to=parseFloat(el.dataset.count)||0,o={v:0};
+    gsap.to(o,{v:to,duration:1.6,ease:'power2.out',
+      scrollTrigger:{trigger:el,start:'top 92%'},
+      onUpdate:function(){
+        el.textContent=(el.dataset.pre||'')+Math.round(o.v)+(el.dataset.suf||'');
+      }});
+  });
+  /* brilho que segue o mouse nos cards */
+  var svcs=D.querySelectorAll('.svc');
+  for(var i2=0;i2<svcs.length;i2++)(function(el){
+    el.addEventListener('mousemove',function(e){
+      var r=el.getBoundingClientRect();
+      el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+      el.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+    },{passive:true});
+  })(svcs[i2]);
+}
+
+/* ═══════════ WEBGL ═══════════ */
+function webgl(){
+  var canvas=$('gl');
+  if(!canvas)return;
+  if(reduce||typeof THREE==='undefined'){D.documentElement.classList.add('noGL');canvas.style.display='none';return;}
+  var R;
+  try{R=new THREE.WebGLRenderer({canvas:canvas,antialias:!small,alpha:false,powerPreference:'high-performance'});}
+  catch(e){D.documentElement.classList.add('noGL');canvas.style.display='none';return;}
+  canvas.addEventListener('webglcontextlost',function(ev){ev.preventDefault();canvas.style.display='none';},false);
+
+  var DPR=Math.min(W.devicePixelRatio||1,small?1.3:1.75);
+  R.setPixelRatio(DPR);
+  R.setClearColor(0x05060A,1);
+  if(THREE.sRGBEncoding)R.outputEncoding=THREE.sRGBEncoding;
+
+  var scene=new THREE.Scene();
+  var camera=new THREE.PerspectiveCamera(48,1,.1,120);
+  camera.position.set(0,0,6.2);
+
+  /* ---- ruido simplex 3D compartilhado pelos shaders ---- */
+  var NOISE=[
+'vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}',
+'vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}',
+'vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}',
+'vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}',
+'float snoise(vec3 v){',
+'  const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(0.0,0.5,1.0,2.0);',
+'  vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);',
+'  vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.0-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);',
+'  vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;',
+'  i=mod289(i);',
+'  vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));',
+'  float n_=0.142857142857;vec3 ns=n_*D.wyz-D.xzx;',
+'  vec4 j=p-49.0*floor(p*ns.z*ns.z);',
+'  vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);',
+'  vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.0-abs(x)-abs(y);',
+'  vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);',
+'  vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;vec4 sh=-step(h,vec4(0.0));',
+'  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;',
+'  vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);',
+'  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));',
+'  p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;',
+'  vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);m=m*m;',
+'  return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}'
+  ].join('\n');
+
+  /* ---- nucleo: esfera deformada por ruido, com borda em fresnel ---- */
+  var coreU={uT:{value:0},uAmp:{value:.34},uPulse:{value:0}};
+  var core=new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.5,small?3:5),
+    new THREE.ShaderMaterial({
+      uniforms:coreU,transparent:true,
+      vertexShader:NOISE+[
+'uniform float uT;uniform float uAmp;uniform float uPulse;',
+'varying vec3 vN;varying vec3 vV;varying float vD;',
+'void main(){',
+'  float n=snoise(normal*1.5+vec3(0.0,0.0,uT*0.32));',
+'  float n2=snoise(normal*3.4-vec3(uT*0.18));',
+'  float d=n*uAmp+n2*uAmp*0.34+uPulse*0.16;',
+'  vD=n;',
+'  vec3 p=position+normal*d;',
+'  vec4 mv=modelViewMatrix*vec4(p,1.0);',
+'  vN=normalize(normalMatrix*normal);vV=normalize(-mv.xyz);',
+'  gl_Position=projectionMatrix*mv;}'
+      ].join('\n'),
+      fragmentShader:[
+'varying vec3 vN;varying vec3 vV;varying float vD;',
+'void main(){',
+'  float f=pow(1.0-abs(dot(normalize(vN),normalize(vV))),2.4);',
+'  vec3 deep=vec3(0.020,0.055,0.085);',
+'  vec3 cy=vec3(0.133,0.882,1.0);',
+'  vec3 col=mix(deep,cy,f);',
+'  col+=cy*pow(f,4.0)*0.9;',
+'  col+=cy*smoothstep(0.35,0.9,vD)*0.10;',
+'  gl_FragColor=vec4(col,0.42+f*0.58);}'
+      ].join('\n')
+    })
+  );
+  scene.add(core);
+
+  /* casca em arame: reforca a leitura de "malha" */
+  var shellU={uT:{value:0},uAmp:{value:.34},uPulse:{value:0}};
+  var shell=new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.62,small?2:3),
+    new THREE.ShaderMaterial({
+      uniforms:shellU,transparent:true,wireframe:true,
+      blending:THREE.AdditiveBlending,depthWrite:false,
+      vertexShader:NOISE+[
+'uniform float uT;uniform float uAmp;uniform float uPulse;varying float vF;',
+'void main(){',
+'  float n=snoise(normal*1.5+vec3(0.0,0.0,uT*0.32));',
+'  vec3 p=position+normal*(n*uAmp*1.05+uPulse*0.16);',
+'  vec4 mv=modelViewMatrix*vec4(p,1.0);',
+'  vF=clamp(0.55+n*0.45,0.0,1.0);',
+'  gl_Position=projectionMatrix*mv;}'
+      ].join('\n'),
+      fragmentShader:'varying float vF;void main(){gl_FragColor=vec4(vec3(0.133,0.882,1.0)*vF,0.16*vF);}'
+    })
+  );
+  scene.add(shell);
+
+  /* ---- campo de particulas ---- */
+  var N=small?900:2600;
+  var pos=new Float32Array(N*3), rnd=new Float32Array(N*3);
+  for(var i=0;i<N;i++){
+    var r=2.6+Math.pow(Math.random(),.6)*11;
+    var th=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1);
+    pos[i*3]=Math.sin(ph)*Math.cos(th)*r;
+    pos[i*3+1]=Math.sin(ph)*Math.sin(th)*r*.62;
+    pos[i*3+2]=Math.cos(ph)*r*.8-3;
+    rnd[i*3]=Math.random();rnd[i*3+1]=Math.random();rnd[i*3+2]=Math.random();
+  }
+  var pg=new THREE.BufferGeometry();
+  pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  pg.setAttribute('aR',new THREE.BufferAttribute(rnd,3));
+  var pu={uT:{value:0},uM:{value:new THREE.Vector3()},uS:{value:0},uPx:{value:DPR}};
+  var pts=new THREE.Points(pg,new THREE.ShaderMaterial({
+    uniforms:pu,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+    vertexShader:[
+'attribute vec3 aR;uniform float uT;uniform vec3 uM;uniform float uS;uniform float uPx;',
+'varying float vA;',
+'void main(){',
+'  vec3 p=position;',
+'  float t=uT*(0.16+aR.x*0.34);',
+'  p.x+=sin(t+aR.y*6.28)*0.5;',
+'  p.y+=cos(t*0.8+aR.z*6.28)*0.5;',
+'  p.z+=uS*(3.0+aR.x*9.0);',            /* o campo avanca com a rolagem */
+'  vec3 d=p-uM;float dd=length(d);',
+'  p+=normalize(d+0.0001)*smoothstep(3.4,0.0,dd)*1.5;',  /* afasta do mouse */
+'  vec4 mv=modelViewMatrix*vec4(p,1.0);',
+'  float fade=smoothstep(28.0,4.0,-mv.z);',
+'  vA=(0.18+aR.z*0.72)*fade;',
+'  gl_PointSize=(aR.y*2.6+0.9)*uPx*(9.0/max(1.0,-mv.z));',
+'  gl_Position=projectionMatrix*mv;}'
+    ].join('\n'),
+    fragmentShader:[
+'varying float vA;',
+'void main(){',
+'  vec2 c=gl_PointCoord-0.5;float d=length(c);',
+'  if(d>0.5)discard;',
+'  float a=smoothstep(0.5,0.0,d);',
+'  gl_FragColor=vec4(mix(vec3(0.55,0.92,1.0),vec3(1.0),0.25)*a,a*vA);}'
+    ].join('\n')
+  }));
+  scene.add(pts);
+
+  /* ---- pós: bloom em meia resolução + vinheta ---- */
+  var POST=!small;
+  var quadScene,quadCam,quadMesh,rtS,rtA,rtB,mBright,mBlur,mComp;
+  if(POST){
+    quadScene=new THREE.Scene();
+    quadCam=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+    var qg=new THREE.PlaneGeometry(2,2);
+    quadMesh=new THREE.Mesh(qg,null); quadScene.add(quadMesh);
+    var VQ='varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.0,1.0);}';
+    mBright=new THREE.ShaderMaterial({uniforms:{tD:{value:null},uT:{value:.62}},vertexShader:VQ,
+      fragmentShader:'uniform sampler2D tD;uniform float uT;varying vec2 vUv;void main(){vec3 c=texture2D(tD,vUv).rgb;float l=dot(c,vec3(0.2126,0.7152,0.0722));gl_FragColor=vec4(c*smoothstep(uT,uT+0.45,l),1.0);}'});
+    mBlur=new THREE.ShaderMaterial({uniforms:{tD:{value:null},uDir:{value:new THREE.Vector2(1,0)},uRes:{value:new THREE.Vector2(1,1)}},vertexShader:VQ,
+      fragmentShader:['uniform sampler2D tD;uniform vec2 uDir;uniform vec2 uRes;varying vec2 vUv;',
+        'void main(){vec2 o=uDir/uRes;vec3 s=texture2D(tD,vUv).rgb*0.2270270;',
+        's+=texture2D(tD,vUv+o*1.3846).rgb*0.3162162;s+=texture2D(tD,vUv-o*1.3846).rgb*0.3162162;',
+        's+=texture2D(tD,vUv+o*3.2307).rgb*0.0702702;s+=texture2D(tD,vUv-o*3.2307).rgb*0.0702702;',
+        'gl_FragColor=vec4(s,1.0);}'].join('')});
+    mComp=new THREE.ShaderMaterial({uniforms:{tD:{value:null},tB:{value:null},uStr:{value:.85}},vertexShader:VQ,
+      fragmentShader:['uniform sampler2D tD;uniform sampler2D tB;uniform float uStr;varying vec2 vUv;',
+        'void main(){vec3 c=texture2D(tD,vUv).rgb+texture2D(tB,vUv).rgb*uStr;',
+        'float v=smoothstep(1.15,0.28,length(vUv-0.5));c*=mix(0.55,1.0,v);',   /* vinheta */
+        'gl_FragColor=vec4(c,1.0);}'].join('')});
+  }
+
+  function size(){
+    var w=W.innerWidth,h=W.innerHeight;
+    R.setSize(w,h,false);
+    camera.aspect=w/h;camera.updateProjectionMatrix();
+    pu.uPx.value=DPR;
+    if(POST){
+      var pw=Math.max(2,Math.floor(w*DPR)),ph=Math.max(2,Math.floor(h*DPR));
+      var hw=Math.max(2,Math.floor(pw/2)),hh=Math.max(2,Math.floor(ph/2));
+      if(rtS)rtS.dispose(); if(rtA)rtA.dispose(); if(rtB)rtB.dispose();
+      var o={minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,format:THREE.RGBAFormat};
+      rtS=new THREE.WebGLRenderTarget(pw,ph,o);
+      rtA=new THREE.WebGLRenderTarget(hw,hh,o);
+      rtB=new THREE.WebGLRenderTarget(hw,hh,o);
+      mBlur.uniforms.uRes.value.set(hw,hh);
+    }
+  }
+  size(); W.addEventListener('resize',size);
+
+  if(fine)W.addEventListener('mousemove',function(e){
+    mouse.x=e.clientX/W.innerWidth-.5; mouse.y=e.clientY/W.innerHeight-.5;
+  },{passive:true});
+
+  /* coreografia por cena */
+  /* no desktop o objeto vive a direita, deixando a coluna de texto limpa;
+     no celular ele sobe para tras do lettermark, onde nao ha corpo de texto */
+  var HX=small?0.15:2.4, HY=small?2.9:0.15, HS=small?0.58:1.0;
+  var KEY=[
+    {p:0.00,cz:6.2,x:HX,y:HY,s:HS},
+    {p:0.24,cz:7.4,x:-1.9,y: 0.35,s:0.80},
+    {p:0.50,cz:7.9,x: 2.1,y:-0.25,s:0.66},
+    {p:0.72,cz:7.0,x:-1.7,y: 0.45,s:0.78},
+    {p:0.90,cz:5.8,x: 0.0,y: 0.10,s:1.02},
+    {p:1.00,cz:7.6,x: 0.0,y:-1.30,s:0.62}
+  ];
+  function key(p){
+    for(var i=0;i<KEY.length-1;i++){
+      var a=KEY[i],b=KEY[i+1];
+      if(p<=b.p){
+        var t=(p-a.p)/Math.max(.0001,b.p-a.p); t=t*t*(3-2*t);
+        return {cz:lerp(a.cz,b.cz,t),x:lerp(a.x,b.x,t),y:lerp(a.y,b.y,t),s:lerp(a.s,b.s,t)};
+      }
+    }
+    return KEY[KEY.length-1];
+  }
+
+  var t0=performance.now(),hidden=false,cp=0,mx3=new THREE.Vector3();
+  var cxp=0,cyp=0,sx=HX,sy=HY,ss=HS,scz=6.2;
+  D.addEventListener('visibilitychange',function(){hidden=D.hidden;});
+  setTimeout(function(){canvas.classList.add('on');},250);
+
+  function frame(){
+    requestAnimationFrame(frame);
+    if(hidden)return;
+    var t=(performance.now()-t0)/1000;
+    cp=lerp(cp,scrollP,.08);
+    var k=key(cp);
+
+    coreU.uT.value=t; shellU.uT.value=t;
+    var pulse=Math.sin(t*1.1)*.5+.5;
+    coreU.uPulse.value=pulse*.12; shellU.uPulse.value=pulse*.12;
+
+    sx=lerp(sx,k.x,.07); sy=lerp(sy,k.y,.07); ss=lerp(ss,k.s,.07); scz=lerp(scz,k.cz,.07);
+    core.position.set(sx,sy,0); shell.position.set(sx,sy,0);
+    core.scale.setScalar(ss); shell.scale.setScalar(ss);
+    core.rotation.y=t*.13+cp*2.2; core.rotation.x=t*.07;
+    shell.rotation.y=-t*.09+cp*1.4; shell.rotation.x=-t*.05;
+
+    cxp=lerp(cxp,mouse.x*.9,.045); cyp=lerp(cyp,-mouse.y*.6,.045);
+    camera.position.set(cxp,cyp,scz);
+    camera.lookAt(sx*.35,sy*.35,0);
+
+    pu.uT.value=t; pu.uS.value=cp;
+    mx3.set(mouse.x*7,-mouse.y*4.4,1.5); pu.uM.value.copy(mx3);
+    pts.rotation.y=cp*.5;
+
+    if(POST&&rtS){
+      R.setRenderTarget(rtS); R.clear(); R.render(scene,camera);
+      quadMesh.material=mBright; mBright.uniforms.tD.value=rtS.texture;
+      R.setRenderTarget(rtA); R.render(quadScene,quadCam);
+      quadMesh.material=mBlur;
+      mBlur.uniforms.tD.value=rtA.texture; mBlur.uniforms.uDir.value.set(1,0);
+      R.setRenderTarget(rtB); R.render(quadScene,quadCam);
+      mBlur.uniforms.tD.value=rtB.texture; mBlur.uniforms.uDir.value.set(0,1);
+      R.setRenderTarget(rtA); R.render(quadScene,quadCam);
+      quadMesh.material=mComp;
+      mComp.uniforms.tD.value=rtS.texture; mComp.uniforms.tB.value=rtA.texture;
+      R.setRenderTarget(null); R.render(quadScene,quadCam);
+    }else{
+      R.setRenderTarget(null); R.render(scene,camera);
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function boot(){
+  try{motion();}catch(e){
+    D.documentElement.classList.add('noMotion');
+    var rv=D.querySelectorAll('.rv');
+    for(var i=0;i<rv.length;i++){rv[i].style.opacity=1;rv[i].style.transform='none';}
+    if(W.console)console.warn('mcs/motion:',e);
+  }
+  try{webgl();}catch(e){
+    D.documentElement.classList.add('noGL');
+    var c=$('gl'); if(c)c.style.display='none';
+    if(W.console)console.warn('mcs/gl:',e);
+  }
+}
+if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);
+else setTimeout(boot,0);
+})();
+</script>
+
+</body>
+</html>

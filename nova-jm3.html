@@ -1142,8 +1142,8 @@ try{
    4. ESTRUTURA 3D — dados dos itens
    ══════════════════════════════════════════════ */
 var ITEMS=[
-  {key:'pdv',name:'Sistema PDV',desc:'Frente de caixa montada pra vender rápido: o operador registra, cobra e a fila anda. Menos gargalo no bar e controle do que saiu.',
-   list:['Frente de caixa para o bar','Fila que anda mesmo no pico','Controle do que foi vendido','Operação alinhada com os copeiros']},
+  {key:'pdv',name:'Sistema PDV',desc:'Maquininha na mão de quem atende: registra o pedido, cobra na hora e a fila anda. Menos gargalo no bar e controle do que saiu.',
+   list:['Cobrança direto na maquininha','Fila que anda mesmo no pico','Controle do que foi vendido','Operação alinhada com os copeiros']},
   {key:'termica',name:'Caixa térmica',desc:'Bebida gelada do primeiro ao último brinde. Distribuídas nos pontos certos, mantêm o estoque frio ao alcance de quem serve.',
    list:['Bebida gelada a noite toda','Estoque perto do ponto de venda','Reposição sem esvaziar o bar','Posicionamento definido no briefing']},
   {key:'balde',name:'Balde de gelo',desc:'O item que o bar não pode perder de vista. Gelo à mão em cada estação, pra servir sem travar o ritmo da noite.',
@@ -1252,20 +1252,24 @@ function boot3D(){
 
   /* ---------- modelos ---------- */
   var BUILD={
-    /* sistema de frente de caixa */
+    /* maquininha de cartao apoiada no dock */
     pdv:function(){
       var g=new THREE.Group();
-      g.add(part(box(.95,.12,.65),INK,{y:-.92,hull:1.05}));
-      g.add(part(box(.14,.72,.14),INK,{y:-.52}));
-      var head=new THREE.Group();
-      head.add(part(box(1.32,.92,.14),PAPER,{hull:1.05}));
-      head.add(part(box(1.04,.66,.04),GOLD,{z:.09}));
-      head.add(part(box(.9,.05,.16),INK,{y:.52,z:.02}));
-      head.position.y=.18; head.rotation.x=-.16;
-      g.add(head);
-      g.add(part(box(.5,.1,.36),INK,{y:-.36,z:.34,rx:-.1}));
-      g.add(part(box(.34,.05,.22),GOLDD,{y:-.29,z:.36,rx:-.1}));
-      return lift(g,.34);
+      g.add(part(box(1,.14,.66),INK,{y:-.57,hull:1.04}));     /* dock */
+      g.add(part(box(.5,.06,.34),GOLDD,{y:-.47}));            /* contato de carga */
+      var dev=new THREE.Group();
+      dev.add(part(box(.82,1.32,.38),PAPER,{hull:1.035}));    /* corpo */
+      dev.add(part(box(.62,.44,.04),GOLD,{y:.36,z:.19}));     /* tela */
+      for(var r=0;r<4;r++){
+        for(var c=0;c<3;c++){
+          dev.add(part(box(.15,.09,.04),INK,{x:-.2+c*.2,y:.02-r*.18,z:.19}));
+        }
+      }
+      dev.add(part(box(.58,.05,.26),INK,{y:.685}));           /* saida do recibo */
+      dev.add(part(box(.46,.04,.04),INK,{y:-.58,z:.19}));     /* leitor de cartao */
+      dev.position.y=.16; dev.rotation.x=-.17;
+      g.add(dev);
+      return g;
     },
     /* caixa térmica */
     termica:function(){

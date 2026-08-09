@@ -114,7 +114,7 @@ h1,h2,h3,h4{font-family:'Outfit',system-ui,sans-serif;font-weight:700;letter-spa
   opacity:0;transition:opacity 1.6s var(--ease);
 }
 .bg3d.on{opacity:.62;}
-@media(max-width:760px){.bg3d.on{opacity:.5;}}
+@media(max-width:760px){.bg3d.on{opacity:.6;}}
 /* conteudo sempre acima da cena */
 .topticker,.hero,.strip,.section,.finale,.footer{position:relative;z-index:1;}
 
@@ -1439,6 +1439,8 @@ function boot3D(){
     var r;
     try{r=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true,powerPreference:'high-performance'});}
     catch(e){return null;}
+    /* celular pode derrubar o contexto por pressao de memoria */
+    canvas.addEventListener('webglcontextlost',function(ev){ev.preventDefault();canvas.style.display='none';},false);
     r.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
     r.setClearAlpha(0);
     if(THREE.sRGBEncoding)r.outputEncoding=THREE.sRGBEncoding;
@@ -1454,6 +1456,142 @@ function boot3D(){
     return st;
   }
 
+  /* ---------- CENA 3: fundo da pagina, montagem de palco ---------- */
+  (function(){
+    var canvas=$('bg3d');
+    if(!canvas)return;
+    var small=window.innerWidth<760;
+    var renderer=makeRenderer(canvas);
+    if(!renderer){canvas.style.display='none';return;}
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,small?1.4:1.75));
+
+    var scene=new THREE.Scene();
+    /* a neblina na cor do papel dissolve os objetos ao longe */
+    scene.fog=new THREE.Fog(0xFBF9F5,12,44);
+    var camera=new THREE.PerspectiveCamera(46,1,.1,90);
+    lights(scene);
+    scene.environment=envMap(renderer);
+
+    /* --- trelica de palco --- */
+    function truss(len){
+      var g=new THREE.Group(), q=.34;
+      var ch=cyl(.05,.05,len,10), dg=cyl(.032,.032,1.18,8);
+      var c=[[-q,-q],[q,-q],[-q,q],[q,q]];
+      for(var i=0;i<4;i++)g.add(part(ch,STEEL2(),{x:c[i][0],y:c[i][1],rx:Math.PI/2}));
+      var n=Math.floor(len/1.05);
+      for(var j=0;j<n;j++){
+        var z=-len/2+.7+j*1.05, a=(j%2?1:-1)*.86;
+        g.add(part(dg,STEEL2(),{x:-q,z:z,rx:a}));
+        g.add(part(dg,STEEL2(),{x:q,z:z,rx:-a}));
+      }
+      return g;
+    }
+    /* --- refletor --- */
+    function par(){
+      var g=new THREE.Group();
+      g.add(part(cyl(.17,.21,.36,20),GRAPH(),{rx:Math.PI/2}));
+      g.add(part(tor(.2,.022,26),STEEL2()));
+      g.add(part(cyl(.15,.15,.02,20),GOLDM(),{z:.17,rx:Math.PI/2}));
+      g.add(part(box(.09,.2,.06,.02),GRAPH(),{y:.26}));
+      return g;
+    }
+    /* --- case de equipamento --- */
+    function roadcase(){
+      var g=new THREE.Group();
+      g.add(part(box(1.15,.72,.72,.06),GRAPH()));
+      g.add(part(box(1.2,.06,.78,.03),STEEL2(),{y:.36}));
+      g.add(part(box(1.2,.06,.78,.03),STEEL2(),{y:-.36}));
+      g.add(part(box(.16,.1,.05,.02),GOLDM(),{y:.06,z:.38}));
+      return g;
+    }
+
+    /* no celular a largura visivel e ~2.4x menor: aproxima os props ou nada aparece */
+    var XMIN=small?2:7, XSPAN=small?2.6:7;
+    var GUARD=small?.46:.4, SOFT=small?.22:.24;
+    var props=[];
+    function place(o,z){
+      /* mantem o miolo livre: o texto da pagina passa por ali */
+      var side=Math.random()<.5?-1:1;
+      o.position.set(side*(XMIN+Math.random()*XSPAN),(Math.random()-.5)*(small?3.6:6.5),z);
+      o.rotation.set((Math.random()-.5)*.5,Math.random()*Math.PI,(Math.random()-.5)*.4);
+      o.userData.sp=(Math.random()-.5)*.12;
+      var mm=[];
+      o.traverse(function(n){
+        if(n.isMesh){n.material=n.material.clone();n.material.transparent=true;n.material.opacity=0;mm.push(n.material);}
+      });
+      o.userData.mats=mm;
+      scene.add(o); props.push(o);
+    }
+    var NT=small?3:3, NP=small?6:7, NC=small?4:5;
+    for(var i=0;i<NT;i++)place(truss(small?3.4:6.5),-6-i*17);
+    for(var i=0;i<NP;i++)place(par(),-4-i*7.4);
+    for(var i=0;i<NC;i++)place(roadcase(),-11-i*11);
+
+    /* --- confete/poeira de palco --- */
+    var pc=document.createElement('canvas'); pc.width=pc.height=32;
+    var px=pc.getContext('2d');
+    var pg=px.createRadialGradient(16,16,0,16,16,16);
+    pg.addColorStop(0,'rgba(210,166,58,.95)'); pg.addColorStop(1,'rgba(210,166,58,0)');
+    px.fillStyle=pg; px.fillRect(0,0,32,32);
+    var N=small?110:220, pos=new Float32Array(N*3);
+    for(var i=0;i<N;i++){
+      pos[i*3]=(Math.random()<.5?-1:1)*((small?.9:3)+Math.random()*(small?5:13));
+      pos[i*3+1]=(Math.random()-.5)*16;
+      pos[i*3+2]=4-Math.random()*64;
+    }
+    var pgeo=new THREE.BufferGeometry();
+    pgeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    var dots=new THREE.Points(pgeo,new THREE.PointsMaterial({
+      size:.13,map:new THREE.CanvasTexture(pc),transparent:true,opacity:.75,
+      depthWrite:false,sizeAttenuation:true
+    }));
+    scene.add(dots);
+
+    function resize(){
+      var w=window.innerWidth,h=window.innerHeight;
+      renderer.setSize(w,h,false);
+      camera.aspect=w/h; camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize',resize); resize();
+
+    var NDC=new THREE.Vector3();
+    var mx=0,my=0,cx=0,cy=0,sp=0,t0=performance.now(),hidden=false;
+    document.addEventListener('visibilitychange',function(){hidden=document.hidden;});
+    if(fine){
+      window.addEventListener('mousemove',function(e){
+        mx=e.clientX/window.innerWidth-.5; my=e.clientY/window.innerHeight-.5;
+      },{passive:true});
+    }
+    function docH(){return Math.max(1,document.documentElement.scrollHeight-window.innerHeight);}
+
+    function frame(){
+      requestAnimationFrame(frame);
+      if(hidden)return;
+      var t=(performance.now()-t0)/1000;
+      sp=lerp(sp,clamp((window.pageYOffset||0)/docH(),0,1),.07);
+      cx=lerp(cx,mx*1.6,.05); cy=lerp(cy,-my*1.1,.05);
+      /* travelling pelo galpao conforme a pagina rola */
+      camera.position.set(cx+Math.sin(sp*Math.PI*1.6)*.7, cy-sp*1.6, 8-sp*62);
+      camera.lookAt(cx*.4,cy*.4-sp*1.6,camera.position.z-10);
+      for(var i=0;i<props.length;i++){
+        var o=props[i];
+        o.rotation.y+=o.userData.sp*.004;
+        o.rotation.x+=o.userData.sp*.002;
+        /* o miolo da tela e do texto: prop so aparece nas margens */
+        NDC.copy(o.position).project(camera);
+        var op=(NDC.z>1)?0:clamp((Math.abs(NDC.x)-GUARD)/SOFT,0,1);
+        o.visible=op>.012;
+        if(o.visible){
+          var mm=o.userData.mats;
+          for(var k=0;k<mm.length;k++)mm[k].opacity=op;
+        }
+      }
+      dots.rotation.y=t*.012;
+      renderer.render(scene,camera);
+    }
+    requestAnimationFrame(frame);
+    setTimeout(function(){canvas.classList.add('on');resize();},220);
+  })();
   /* ---------- CENA 1: palco do hero ---------- */
   (function(){
     var canvas=$('heroGl'), stage=$('heroStage');
@@ -1640,142 +1778,7 @@ function boot3D(){
     window.addEventListener('load',resize);
   })();
 
-  /* ---------- CENA 3: fundo da pagina, montagem de palco ---------- */
-  (function(){
-    var canvas=$('bg3d');
-    if(!canvas)return;
-    var small=window.innerWidth<760;
-    var renderer=makeRenderer(canvas);
-    if(!renderer){canvas.style.display='none';return;}
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,small?1.4:1.75));
 
-    var scene=new THREE.Scene();
-    /* a neblina na cor do papel dissolve os objetos ao longe */
-    scene.fog=new THREE.Fog(0xFBF9F5,12,44);
-    var camera=new THREE.PerspectiveCamera(46,1,.1,90);
-    lights(scene);
-    scene.environment=envMap(renderer);
-
-    /* --- trelica de palco --- */
-    function truss(len){
-      var g=new THREE.Group(), q=.34;
-      var ch=cyl(.05,.05,len,10), dg=cyl(.032,.032,1.18,8);
-      var c=[[-q,-q],[q,-q],[-q,q],[q,q]];
-      for(var i=0;i<4;i++)g.add(part(ch,STEEL2(),{x:c[i][0],y:c[i][1],rx:Math.PI/2}));
-      var n=Math.floor(len/1.05);
-      for(var j=0;j<n;j++){
-        var z=-len/2+.7+j*1.05, a=(j%2?1:-1)*.86;
-        g.add(part(dg,STEEL2(),{x:-q,z:z,rx:a}));
-        g.add(part(dg,STEEL2(),{x:q,z:z,rx:-a}));
-      }
-      return g;
-    }
-    /* --- refletor --- */
-    function par(){
-      var g=new THREE.Group();
-      g.add(part(cyl(.17,.21,.36,20),GRAPH(),{rx:Math.PI/2}));
-      g.add(part(tor(.2,.022,26),STEEL2()));
-      g.add(part(cyl(.15,.15,.02,20),GOLDM(),{z:.17,rx:Math.PI/2}));
-      g.add(part(box(.09,.2,.06,.02),GRAPH(),{y:.26}));
-      return g;
-    }
-    /* --- case de equipamento --- */
-    function roadcase(){
-      var g=new THREE.Group();
-      g.add(part(box(1.15,.72,.72,.06),GRAPH()));
-      g.add(part(box(1.2,.06,.78,.03),STEEL2(),{y:.36}));
-      g.add(part(box(1.2,.06,.78,.03),STEEL2(),{y:-.36}));
-      g.add(part(box(.16,.1,.05,.02),GOLDM(),{y:.06,z:.38}));
-      return g;
-    }
-
-    /* no celular a largura visivel e ~2.4x menor: aproxima os props ou nada aparece */
-    var XMIN=small?2.6:7, XSPAN=small?2.9:7;
-    var GUARD=small?.5:.4, SOFT=small?.26:.24;
-    var props=[];
-    function place(o,z){
-      /* mantem o miolo livre: o texto da pagina passa por ali */
-      var side=Math.random()<.5?-1:1;
-      o.position.set(side*(XMIN+Math.random()*XSPAN),(Math.random()-.5)*(small?4.6:6.5),z);
-      o.rotation.set((Math.random()-.5)*.5,Math.random()*Math.PI,(Math.random()-.5)*.4);
-      o.userData.sp=(Math.random()-.5)*.12;
-      var mm=[];
-      o.traverse(function(n){
-        if(n.isMesh){n.material=n.material.clone();n.material.transparent=true;n.material.opacity=0;mm.push(n.material);}
-      });
-      o.userData.mats=mm;
-      scene.add(o); props.push(o);
-    }
-    var NT=small?3:3, NP=small?6:7, NC=small?4:5;
-    for(var i=0;i<NT;i++)place(truss(6.5),-6-i*17);
-    for(var i=0;i<NP;i++)place(par(),-4-i*7.4);
-    for(var i=0;i<NC;i++)place(roadcase(),-11-i*11);
-
-    /* --- confete/poeira de palco --- */
-    var pc=document.createElement('canvas'); pc.width=pc.height=32;
-    var px=pc.getContext('2d');
-    var pg=px.createRadialGradient(16,16,0,16,16,16);
-    pg.addColorStop(0,'rgba(210,166,58,.95)'); pg.addColorStop(1,'rgba(210,166,58,0)');
-    px.fillStyle=pg; px.fillRect(0,0,32,32);
-    var N=small?110:220, pos=new Float32Array(N*3);
-    for(var i=0;i<N;i++){
-      pos[i*3]=(Math.random()<.5?-1:1)*((small?1.4:3)+Math.random()*(small?7:13));
-      pos[i*3+1]=(Math.random()-.5)*16;
-      pos[i*3+2]=4-Math.random()*64;
-    }
-    var pgeo=new THREE.BufferGeometry();
-    pgeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-    var dots=new THREE.Points(pgeo,new THREE.PointsMaterial({
-      size:.13,map:new THREE.CanvasTexture(pc),transparent:true,opacity:.75,
-      depthWrite:false,sizeAttenuation:true
-    }));
-    scene.add(dots);
-
-    function resize(){
-      var w=window.innerWidth,h=window.innerHeight;
-      renderer.setSize(w,h,false);
-      camera.aspect=w/h; camera.updateProjectionMatrix();
-    }
-    window.addEventListener('resize',resize); resize();
-
-    var NDC=new THREE.Vector3();
-    var mx=0,my=0,cx=0,cy=0,sp=0,t0=performance.now(),hidden=false;
-    document.addEventListener('visibilitychange',function(){hidden=document.hidden;});
-    if(fine){
-      window.addEventListener('mousemove',function(e){
-        mx=e.clientX/window.innerWidth-.5; my=e.clientY/window.innerHeight-.5;
-      },{passive:true});
-    }
-    function docH(){return Math.max(1,document.documentElement.scrollHeight-window.innerHeight);}
-
-    function frame(){
-      requestAnimationFrame(frame);
-      if(hidden)return;
-      var t=(performance.now()-t0)/1000;
-      sp=lerp(sp,clamp((window.pageYOffset||0)/docH(),0,1),.07);
-      cx=lerp(cx,mx*1.6,.05); cy=lerp(cy,-my*1.1,.05);
-      /* travelling pelo galpao conforme a pagina rola */
-      camera.position.set(cx+Math.sin(sp*Math.PI*1.6)*.7, cy-sp*1.6, 8-sp*62);
-      camera.lookAt(cx*.4,cy*.4-sp*1.6,camera.position.z-10);
-      for(var i=0;i<props.length;i++){
-        var o=props[i];
-        o.rotation.y+=o.userData.sp*.004;
-        o.rotation.x+=o.userData.sp*.002;
-        /* o miolo da tela e do texto: prop so aparece nas margens */
-        NDC.copy(o.position).project(camera);
-        var op=(NDC.z>1)?0:clamp((Math.abs(NDC.x)-GUARD)/SOFT,0,1);
-        o.visible=op>.012;
-        if(o.visible){
-          var mm=o.userData.mats;
-          for(var k=0;k<mm.length;k++)mm[k].opacity=op;
-        }
-      }
-      dots.rotation.y=t*.012;
-      renderer.render(scene,camera);
-    }
-    requestAnimationFrame(frame);
-    setTimeout(function(){canvas.classList.add('on');resize();},220);
-  })();
 }
 
 /* ══════════════════════════════════════════════

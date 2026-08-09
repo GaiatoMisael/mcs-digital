@@ -1142,8 +1142,8 @@ try{
    4. ESTRUTURA 3D — dados dos itens
    ══════════════════════════════════════════════ */
 var ITEMS=[
-  {key:'pdv',name:'Sistema PDV',desc:'Maquininha na mão de quem atende: registra o pedido, cobra na hora e a fila anda. Menos gargalo no bar e controle do que saiu.',
-   list:['Cobrança direto na maquininha','Fila que anda mesmo no pico','Controle do que foi vendido','Operação alinhada com os copeiros']},
+  {key:'pdv',name:'Sistema PDV',desc:'Cada garçom entra na noite com a sua maquininha. O pedido é registrado e cobrado ali mesmo, sem o convidado sair do lugar nem enfrentar fila de caixa.',
+   list:['Uma maquininha por garçom em campo','Cobrança na hora, sem fila no caixa','Controle do que foi vendido na noite','Quantidade de aparelhos conforme o porte do evento']},
   {key:'termica',name:'Caixa térmica',desc:'Bebida gelada do primeiro ao último brinde. Distribuídas nos pontos certos, mantêm o estoque frio ao alcance de quem serve.',
    list:['Bebida gelada a noite toda','Estoque perto do ponto de venda','Reposição sem esvaziar o bar','Posicionamento definido no briefing']},
   {key:'balde',name:'Balde de gelo',desc:'O item que o bar não pode perder de vista. Gelo à mão em cada estação, pra servir sem travar o ritmo da noite.',
@@ -1251,26 +1251,40 @@ function boot3D(){
   var tor=function(r,t,s,arc){return new THREE.TorusGeometry(r,t,10,s||28,arc);};
 
   /* ---------- modelos ---------- */
+  /* maquininha de cartao (tela cheia + cabeca de impressora) */
+  function pdvUnit(){
+    var g=new THREE.Group();
+    g.add(part(box(.88,1.28,.17),GREEN,{hull:1.035}));       /* corpo */
+    g.add(part(box(.74,.84,.04),INK,{y:-.1,z:.1}));          /* tela */
+    g.add(part(box(.2,.03,.03),INK,{y:.42,z:.095}));         /* alto-falante */
+    g.add(part(cyl(.028,.028,.03,10),INK,{x:-.28,y:.42,z:.095,rx:Math.PI/2})); /* camera */
+    g.add(part(box(.7,.035,.05),INK,{y:.56,z:.09}));         /* saida do papel */
+    g.add(part(box(.88,.22,.2),GREEN,{y:.51,z:-.115}));      /* degrau traseiro */
+    g.add(part(box(.88,.16,.14),GREEN,{y:.34,z:-.085}));     /* degrau traseiro */
+    var hd=new THREE.Group();                                /* cabeca da impressora */
+    hd.add(part(box(.88,.4,.36),GREEN,{hull:1.03}));
+    for(var a=0;a<3;a++){                                    /* area de aproximacao */
+      hd.add(part(tor(.07+a*.06,.015,20,1.5),INK,{z:.19,rz:-.75}));
+    }
+    hd.position.set(0,.8,-.095);
+    g.add(hd);
+    return g;
+  }
   var BUILD={
-    /* maquininha de cartao (tela cheia + cabeca de impressora) no dock */
+    /* uma maquininha por garcom: trio no visualizador */
     pdv:function(){
       var g=new THREE.Group();
-      g.add(part(box(.88,1.28,.17),GREEN,{hull:1.035}));       /* corpo */
-      g.add(part(box(.74,.84,.04),INK,{y:-.1,z:.1}));          /* tela */
-      g.add(part(box(.2,.03,.03),INK,{y:.42,z:.095}));         /* alto-falante */
-      g.add(part(cyl(.028,.028,.03,10),INK,{x:-.28,y:.42,z:.095,rx:Math.PI/2})); /* camera */
-      g.add(part(box(.7,.035,.05),INK,{y:.56,z:.09}));         /* saida do papel */
-      g.add(part(box(.88,.22,.2),GREEN,{y:.51,z:-.115}));      /* degrau traseiro */
-      g.add(part(box(.88,.16,.14),GREEN,{y:.34,z:-.085}));     /* degrau traseiro */
-      var hd=new THREE.Group();                                /* cabeca da impressora */
-      hd.add(part(box(.88,.4,.36),GREEN,{hull:1.03}));
-      for(var a=0;a<3;a++){                                    /* area de aproximacao */
-        hd.add(part(tor(.07+a*.06,.015,20,1.5),INK,{z:.19,rz:-.75}));
+      /* tres viradas pra fora: em qualquer angulo do giro aparecem as tres */
+      for(var i=0;i<3;i++){
+        var a=(i/3)*Math.PI*2, u=pdvUnit();
+        u.scale.setScalar(.85);
+        u.position.set(Math.sin(a)*.72,-.096,Math.cos(a)*.72);
+        u.rotation.y=a;
+        g.add(u);
       }
-      hd.position.set(0,.8,-.095);
-      g.add(hd);
       return g;
     },
+    pdvSolo:pdvUnit,
     /* caixa térmica */
     termica:function(){
       var g=new THREE.Group();
@@ -1316,6 +1330,7 @@ function boot3D(){
     }
   };
   var ORDER=['pdv','termica','balde','gradil','bistro'];
+  var HERO=['pdvSolo','termica','balde','gradil','bistro'];
 
   function lights(scene){
     scene.add(new THREE.AmbientLight(0xffffff,.8));
@@ -1359,13 +1374,13 @@ function boot3D(){
     rig.add(part(tor(R+.62,.02,90),GOLDD,{rx:Math.PI/1.9,rz:-.3}));
 
     var sats=[];
-    for(var s=0;s<ORDER.length;s++){
+    for(var s=0;s<HERO.length;s++){
       var holder=new THREE.Group();
-      var m=BUILD[ORDER[s]]();
+      var m=BUILD[HERO[s]]();
       m.scale.setScalar(.47);
       holder.add(m);
       rig.add(holder);
-      sats.push({h:holder,m:m,a:(s/ORDER.length)*Math.PI*2,sp:.5+s*.07});
+      sats.push({h:holder,m:m,a:(s/HERO.length)*Math.PI*2,sp:.5+s*.07});
     }
 
     /* cubos soltos (poeira da operação) */

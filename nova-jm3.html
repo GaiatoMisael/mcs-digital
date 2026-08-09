@@ -1183,14 +1183,57 @@ function boot3D(){
     return;
   }
 
-  var PAPER=0xF7F3EA, GOLD=0xE8C25D, GOLDD=0xD2A63A, INK=0x2A2721, GREEN=0x71BE45;
-  var mats={};
-  function mat(c){
-    if(!mats[c]){mats[c]=new THREE.MeshPhongMaterial({color:c,shininess:24,specular:0x252525});}
-    return mats[c];
+  /* ---------- materiais PBR ---------- */
+  var MAT={};
+  function std(k,color,metal,rough,extra){
+    if(!MAT[k]){
+      var o={color:color,metalness:metal,roughness:rough};
+      if(extra)for(var p in extra)o[p]=extra[p];
+      MAT[k]=new THREE.MeshStandardMaterial(o);
+      /* cores hex sao sRGB; com outputEncoding sRGB o r128 as trata como lineares */
+      if(MAT[k].color.convertSRGBToLinear)MAT[k].color.convertSRGBToLinear();
+    }
+    return MAT[k];
+  }
+  var STEEL =function(){return std('steel',0xA6ACB2,1,.26);};
+  var STEEL2=function(){return std('steel2',0x8E949A,1,.32);};
+  var ALU   =function(){return std('alu',0xCACFD3,1,.34);};
+  var ALUIN =function(){return std('aluin',0x9AA0A5,1,.44,{side:THREE.BackSide});};
+  var WOOD  =function(){return std('wood',0xDCBE8C,0,.62);};
+  var WOOD2 =function(){return std('wood2',0xC5A470,0,.66);};
+  var BLACK =function(){return std('black',0x1B1B1E,.22,.38);};
+  var BLACK2=function(){return std('black2',0x2B2B2F,.22,.52);};
+  var GREENM=function(){return std('green',0x6FBC44,.06,.4);};
+  var DARK  =function(){return std('dark',0x121215,.1,.28);};
+  var GOLDM =function(){return std('gold',0xE0B653,.75,.3);};
+
+  /* ambiente procedural: sem ele o metal renderiza preto */
+  function envMap(renderer){
+    var c=document.createElement('canvas'); c.width=128; c.height=64;
+    var x=c.getContext('2d');
+    var g=x.createLinearGradient(0,0,0,64);
+    g.addColorStop(0,'#f4f2ee'); g.addColorStop(.42,'#d5d2cb');
+    g.addColorStop(.5,'#ffffff'); g.addColorStop(.56,'#83807a');
+    g.addColorStop(1,'#4b4944');
+    x.fillStyle=g; x.fillRect(0,0,128,64);
+    var r=x.createRadialGradient(30,10,0,30,10,34);
+    r.addColorStop(0,'rgba(255,252,242,1)'); r.addColorStop(1,'rgba(255,252,242,0)');
+    x.fillStyle=r; x.fillRect(0,0,128,64);
+    x.fillStyle='rgba(255,255,255,.85)'; x.fillRect(86,6,26,10);
+    var t=new THREE.CanvasTexture(c);
+    t.mapping=THREE.EquirectangularReflectionMapping;
+    if(THREE.sRGBEncoding)t.encoding=THREE.sRGBEncoding;
+    var env=null;
+    try{
+      var p=new THREE.PMREMGenerator(renderer);
+      p.compileEquirectangularShader();
+      env=p.fromEquirectangular(t).texture;
+      p.dispose();
+    }catch(e){ env=t; }
+    return env;
   }
 
-  /* volume de cantos arredondados — nada de contorno duro */
+  /* volume de cantos arredondados */
   var rcache={};
   function rbox(w,h,d,r){
     var key=w+'_'+h+'_'+d+'_'+r;
@@ -1203,14 +1246,29 @@ function boot3D(){
     sh.lineTo(x+r,y+h); sh.quadraticCurveTo(x,y+h,x,y+h-r);
     sh.lineTo(x,y+r); sh.quadraticCurveTo(x,y,x+r,y);
     var bv=Math.min(.02,d/5,w/6,h/6);
-    var g=new THREE.ExtrudeGeometry(sh,{depth:Math.max(.001,d-bv*2),bevelEnabled:true,bevelThickness:bv,bevelSize:bv,bevelSegments:2,curveSegments:5});
+    var g=new THREE.ExtrudeGeometry(sh,{depth:Math.max(.001,d-bv*2),bevelEnabled:true,bevelThickness:bv,bevelSize:bv,bevelSegments:3,curveSegments:8});
     g.center();
     rcache[key]=g;
     return g;
   }
-  function part(geo,color,opt){
+  /* quadro de tubo dobrado, com as quinas curvas do gradil */
+  function frameTube(w,h,r,t){
+    var V=THREE.Vector3, hw=w/2, hh=h/2, p=new THREE.CurvePath();
+    function L(a,b){p.add(new THREE.LineCurve3(a,b));}
+    function Q(a,c,b){p.add(new THREE.QuadraticBezierCurve3(a,c,b));}
+    L(new V(-hw+r,-hh,0),new V(hw-r,-hh,0));
+    Q(new V(hw-r,-hh,0),new V(hw,-hh,0),new V(hw,-hh+r,0));
+    L(new V(hw,-hh+r,0),new V(hw,hh-r,0));
+    Q(new V(hw,hh-r,0),new V(hw,hh,0),new V(hw-r,hh,0));
+    L(new V(hw-r,hh,0),new V(-hw+r,hh,0));
+    Q(new V(-hw+r,hh,0),new V(-hw,hh,0),new V(-hw,hh-r,0));
+    L(new V(-hw,hh-r,0),new V(-hw,-hh+r,0));
+    Q(new V(-hw,-hh+r,0),new V(-hw,-hh,0),new V(-hw+r,-hh,0));
+    return new THREE.TubeGeometry(p,260,t,16,true);
+  }
+  function part(geo,material,opt){
     opt=opt||{};
-    var m=new THREE.Mesh(geo,mat(color));
+    var m=new THREE.Mesh(geo,material);
     m.position.set(opt.x||0,opt.y||0,opt.z||0);
     if(opt.rx)m.rotation.x=opt.rx;
     if(opt.ry)m.rotation.y=opt.ry;
@@ -1219,34 +1277,32 @@ function boot3D(){
   }
   function lift(g,y){var w=new THREE.Group();g.position.y=y;w.add(g);return w;}
   var box=function(w,h,d,r){return rbox(w,h,d,r);};
-  var cyl=function(rt,rb,h,s){return new THREE.CylinderGeometry(rt,rb,h,s||40);};
-  var tor=function(r,t,s,arc){return new THREE.TorusGeometry(r,t,14,s||44,arc);};
+  var cyl=function(rt,rb,h,s,open){return new THREE.CylinderGeometry(rt,rb,h,s||48,1,!!open);};
+  var tor=function(r,t,s,arc){return new THREE.TorusGeometry(r,t,18,s||56,arc);};
 
   /* ---------- modelos ---------- */
-  /* maquininha de cartao (tela cheia + cabeca de impressora) */
+  /* maquininha de cartao */
   function pdvUnit(){
     var g=new THREE.Group();
-    g.add(part(box(.88,1.28,.17,.11),GREEN));                /* corpo */
-    g.add(part(box(.74,.84,.045,.05),INK,{y:-.1,z:.09}));    /* tela */
-    g.add(part(box(.2,.035,.03,.015),INK,{y:.42,z:.085}));   /* alto-falante */
-    g.add(part(cyl(.028,.028,.03,12),INK,{x:-.28,y:.42,z:.085,rx:Math.PI/2})); /* camera */
-    g.add(part(box(.7,.04,.05,.02),INK,{y:.56,z:.08}));      /* saida do papel */
-    g.add(part(box(.86,.22,.2,.08),GREEN,{y:.51,z:-.115}));  /* degrau traseiro */
-    g.add(part(box(.86,.16,.14,.06),GREEN,{y:.34,z:-.085})); /* degrau traseiro */
-    var hd=new THREE.Group();                                /* cabeca da impressora */
-    hd.add(part(box(.88,.4,.36,.12),GREEN));
-    for(var a=0;a<3;a++){                                    /* area de aproximacao */
-      hd.add(part(tor(.07+a*.06,.014,22,1.5),INK,{z:.17,rz:-.75}));
+    g.add(part(box(.88,1.28,.17,.11),GREENM()));
+    g.add(part(box(.74,.84,.045,.05),DARK(),{y:-.1,z:.09}));
+    g.add(part(box(.2,.035,.03,.015),DARK(),{y:.42,z:.085}));
+    g.add(part(cyl(.028,.028,.03,16),DARK(),{x:-.28,y:.42,z:.085,rx:Math.PI/2}));
+    g.add(part(box(.7,.04,.05,.02),DARK(),{y:.56,z:.08}));
+    g.add(part(box(.86,.22,.2,.08),GREENM(),{y:.51,z:-.115}));
+    g.add(part(box(.86,.16,.14,.06),GREENM(),{y:.34,z:-.085}));
+    var hd=new THREE.Group();
+    hd.add(part(box(.88,.4,.36,.12),GREENM()));
+    for(var a=0;a<3;a++){
+      hd.add(part(tor(.07+a*.06,.014,26,1.5),DARK(),{z:.17,rz:-.75}));
     }
     hd.position.set(0,.8,-.095);
     g.add(hd);
     return g;
   }
   var BUILD={
-    /* uma maquininha por garcom */
     pdv:function(){
       var g=new THREE.Group();
-      /* tres viradas pra fora: em qualquer angulo do giro aparecem as tres */
       for(var i=0;i<3;i++){
         var a=(i/3)*Math.PI*2, u=pdvUnit();
         u.scale.setScalar(.85);
@@ -1257,67 +1313,93 @@ function boot3D(){
       return g;
     },
     pdvSolo:pdvUnit,
-    /* caixa termica */
+
+    /* CAIXA TERMICA — corpo preto, tampa saliente, pes e pegas laterais */
     termica:function(){
       var g=new THREE.Group();
-      g.add(part(box(1.5,.82,.96,.1),PAPER,{y:-.16}));
-      g.add(part(box(1.52,.1,.98,.05),GOLDD,{y:-.5}));
-      g.add(part(box(1.58,.2,1.04,.07),GOLD,{y:.36}));
-      g.add(part(box(.13,.32,.13,.05),INK,{x:-.86,y:-.14}));
-      g.add(part(box(.13,.32,.13,.05),INK,{x:.86,y:-.14}));
-      return lift(g,-.07);
+      g.add(part(box(1.5,.8,.92,.08),BLACK(),{y:-.08}));           /* corpo */
+      g.add(part(box(1.22,.5,.02,.06),BLACK2(),{y:-.1,z:.465}));   /* rebaixo frontal */
+      g.add(part(box(1.22,.5,.02,.06),BLACK2(),{y:-.1,z:-.465}));
+      g.add(part(box(1.58,.14,1,.05),BLACK(),{y:.4}));             /* tampa */
+      g.add(part(box(1.3,.03,.76,.03),BLACK2(),{y:.465}));         /* painel da tampa */
+      g.add(part(box(.06,.17,.05,.02),BLACK2(),{x:-.755,y:.1,z:.22}));  /* pegas */
+      g.add(part(box(.06,.17,.05,.02),BLACK2(),{x:-.755,y:.1,z:.06}));
+      var fx=[-.56,.56], fz=[-.3,.3];
+      for(var a=0;a<2;a++)for(var b=0;b<2;b++){
+        g.add(part(box(.24,.14,.22,.04),BLACK(),{x:fx[a],y:-.545,z:fz[b]}));
+      }
+      return lift(g,-.025);
     },
-    /* balde de gelo */
+
+    /* BALDE DE ALUMINIO — cone truncado, aro rolado, argolas e pe */
     balde:function(){
       var g=new THREE.Group();
-      g.add(part(cyl(.64,.44,.98,44),GOLD,{y:-.12}));
-      g.add(part(cyl(.56,.56,.07,44),PAPER,{y:.36}));
-      g.add(part(tor(.64,.05,44),INK,{y:.38,rx:Math.PI/2}));
-      g.add(part(tor(.6,.045,34,Math.PI),INK,{y:.4}));
-      g.add(part(cyl(.5,.5,.06,40),INK,{y:-.63}));
-      return lift(g,.02);
+      g.add(part(cyl(.66,.46,.9,64),ALU(),{y:-.06}));              /* corpo */
+      g.add(part(cyl(.63,.44,.88,64,true),ALUIN(),{y:-.05}));      /* parede interna */
+      g.add(part(cyl(.45,.45,.02,64),ALU(),{y:-.48}));             /* fundo */
+      g.add(part(tor(.665,.055,64),ALU(),{y:.39,rx:Math.PI/2}));   /* aro rolado */
+      g.add(part(cyl(.5,.53,.1,64),ALU(),{y:-.55}));               /* pe */
+      for(var s=-1;s<=1;s+=2){                                      /* argolas */
+        g.add(part(box(.06,.1,.08,.02),ALU(),{x:s*.645,y:.24}));
+        g.add(part(tor(.1,.024,40),ALU(),{x:s*.69,y:.13}));
+      }
+      return lift(g,-.045);
     },
-    /* gradil de contencao */
+
+    /* GRADIL — quadro de tubo com quinas curvas, 11 barras, pes em V */
     gradil:function(){
       var g=new THREE.Group();
-      g.add(part(box(2.12,.12,.12,.05),INK,{y:.62}));
-      g.add(part(box(2.12,.12,.12,.05),INK,{y:-.34}));
-      for(var i=0;i<7;i++){
-        g.add(part(box(.075,.86,.075,.03),INK,{x:-.88+i*.293,y:.14}));
+      var W=2.2,H=1.26,R=.3,T=.045,CY=.42;
+      g.add(part(frameTube(W,H,R,T),STEEL(),{y:CY}));
+      var n=11, span=W-2*R-.14, x0=-span/2;
+      for(var i=0;i<n;i++){
+        g.add(part(cyl(.026,.026,H-T*2,24),STEEL2(),{x:x0+i*(span/(n-1)),y:CY}));
       }
-      g.add(part(box(.14,1.28,.14,.06),INK,{x:-1.04,y:.08}));
-      g.add(part(box(.14,1.28,.14,.06),INK,{x:1.04,y:.08}));
-      g.add(part(box(.62,.12,.46,.05),GOLDD,{x:-1.04,y:-.6}));
-      g.add(part(box(.62,.12,.46,.05),GOLDD,{x:1.04,y:-.6}));
-      return lift(g,.02);
+      for(var s=-1;s<=1;s+=2){                                     /* pes */
+        var f=new THREE.Group();
+        f.add(part(cyl(.032,.032,.5,20),STEEL(),{y:-.42,z:.12,rx:-.5}));
+        f.add(part(cyl(.032,.032,.5,20),STEEL(),{y:-.42,z:-.12,rx:.5}));
+        f.add(part(box(.09,.04,.2,.02),STEEL2(),{y:-.62,z:.235}));
+        f.add(part(box(.09,.04,.2,.02),STEEL2(),{y:-.62,z:-.235}));
+        f.position.x=s*.6;
+        g.add(f);
+      }
+      g.add(part(tor(.055,.017,26),STEEL2(),{x:-W/2-.03,y:.78,ry:Math.PI/2}));  /* engates */
+      g.add(part(tor(.055,.017,26),STEEL2(),{x:-W/2-.03,y:.16,ry:Math.PI/2}));
+      return g;
     },
-    /* mesa bistro */
+
+    /* MESA BISTRO — tampo redondo de madeira sobre pernas em X */
     bistro:function(){
       var g=new THREE.Group();
-      g.add(part(cyl(.82,.82,.1,48),PAPER,{y:.74}));
-      g.add(part(tor(.82,.04,48),GOLDD,{y:.74,rx:Math.PI/2}));
-      g.add(part(cyl(.1,.1,1.38,24),INK,{y:.04}));
-      g.add(part(cyl(.52,.6,.14,40),INK,{y:-.68}));
-      return lift(g,.11);
+      g.add(part(cyl(.8,.8,.07,80),WOOD(),{y:.8}));                /* tampo */
+      g.add(part(cyl(.78,.78,.02,80),WOOD2(),{y:.755}));           /* face inferior */
+      g.add(part(box(1.02,.07,.06,.02),WOOD2(),{y:.71,z:.3}));     /* travessas de fixacao */
+      g.add(part(box(1.02,.07,.06,.02),WOOD2(),{y:.71,z:-.3}));
+      for(var s=-1;s<=1;s+=2){                                     /* duas armacoes em X */
+        g.add(part(box(.1,1.62,.055,.022),WOOD(),{y:.09,z:s*.32,rz:.4}));
+        g.add(part(box(.1,1.62,.055,.022),WOOD(),{y:.09,z:s*.32,rz:-.4}));
+        g.add(part(box(.56,.07,.055,.022),WOOD2(),{y:-.3,z:s*.32}));  /* travessa baixa */
+      }
+      return lift(g,-.09);
     }
   };
   var ORDER=['pdv','termica','balde','gradil','bistro'];
   var HERO=['pdvSolo','termica','balde','gradil','bistro'];
 
   function lights(scene){
-    scene.add(new THREE.HemisphereLight(0xffffff,0xE6DFD0,.62));
-    var d1=new THREE.DirectionalLight(0xffffff,.72); d1.position.set(4,8,6); scene.add(d1);
-    var d2=new THREE.DirectionalLight(0xffffff,.26); d2.position.set(-6,3,-5); scene.add(d2);
+    scene.add(new THREE.HemisphereLight(0xffffff,0xDED6C6,.1));
+    var d1=new THREE.DirectionalLight(0xffffff,.8); d1.position.set(4,8,6); scene.add(d1);
+    var d2=new THREE.DirectionalLight(0xffffff,.22); d2.position.set(-6,3,-5); scene.add(d2);
   }
-  /* sombra de contato suave, no lugar do pedestal */
   function softShadow(size,y){
-    var c=document.createElement('canvas'); c.width=c.height=128;
+    var c=document.createElement('canvas'); c.width=c.height=160;
     var x=c.getContext('2d');
-    var gr=x.createRadialGradient(64,64,0,64,64,64);
-    gr.addColorStop(0,'rgba(23,21,15,.30)');
-    gr.addColorStop(.5,'rgba(23,21,15,.11)');
+    var gr=x.createRadialGradient(80,80,0,80,80,80);
+    gr.addColorStop(0,'rgba(23,21,15,.32)');
+    gr.addColorStop(.5,'rgba(23,21,15,.12)');
     gr.addColorStop(1,'rgba(23,21,15,0)');
-    x.fillStyle=gr; x.fillRect(0,0,128,128);
+    x.fillStyle=gr; x.fillRect(0,0,160,160);
     var t=new THREE.CanvasTexture(c);
     var m=new THREE.Mesh(new THREE.PlaneGeometry(size,size),
       new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));
@@ -1330,6 +1412,8 @@ function boot3D(){
     catch(e){return null;}
     r.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
     r.setClearAlpha(0);
+    if(THREE.sRGBEncoding)r.outputEncoding=THREE.sRGBEncoding;
+    if(THREE.ACESFilmicToneMapping){r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1;}
     return r;
   }
   function seen(el){
@@ -1352,6 +1436,7 @@ function boot3D(){
     var camera=new THREE.PerspectiveCamera(40,1,.1,120);
     camera.position.set(0,.2,8.8);
     lights(scene);
+    scene.environment=envMap(renderer);
 
     var rig=new THREE.Group(); scene.add(rig);
 
@@ -1375,7 +1460,7 @@ function boot3D(){
 
     var cubes=[];
     for(var c=0;c<7;c++){
-      var q=part(rbox(.19,.19,.19,.05),c%2?PAPER:GOLDD);
+      var q=part(rbox(.19,.19,.19,.05),c%2?ALU():GOLDM());
       q.position.set((Math.random()-.5)*6.4,(Math.random()-.5)*4.4,-1.4-Math.random()*3.2);
       rig.add(q); cubes.push(q);
     }
@@ -1439,6 +1524,7 @@ function boot3D(){
     camera.position.set(0,.9,6.8);
     camera.lookAt(0,.05,0);
     lights(scene);
+    scene.environment=envMap(renderer);
     scene.add(softShadow(3.6,-1.16));
 
     var pivot=new THREE.Group(); scene.add(pivot);

@@ -114,6 +114,7 @@ h1,h2,h3,h4{font-family:'Outfit',system-ui,sans-serif;font-weight:700;letter-spa
   opacity:0;transition:opacity 1.6s var(--ease);
 }
 .bg3d.on{opacity:.62;}
+@media(max-width:760px){.bg3d.on{opacity:.5;}}
 /* conteudo sempre acima da cena */
 .topticker,.hero,.strip,.section,.finale,.footer{position:relative;z-index:1;}
 
@@ -1688,11 +1689,14 @@ function boot3D(){
       return g;
     }
 
+    /* no celular a largura visivel e ~2.4x menor: aproxima os props ou nada aparece */
+    var XMIN=small?2.6:7, XSPAN=small?2.9:7;
+    var GUARD=small?.5:.4, SOFT=small?.26:.24;
     var props=[];
     function place(o,z){
       /* mantem o miolo livre: o texto da pagina passa por ali */
       var side=Math.random()<.5?-1:1;
-      o.position.set(side*(7+Math.random()*7),(Math.random()-.5)*6.5,z);
+      o.position.set(side*(XMIN+Math.random()*XSPAN),(Math.random()-.5)*(small?4.6:6.5),z);
       o.rotation.set((Math.random()-.5)*.5,Math.random()*Math.PI,(Math.random()-.5)*.4);
       o.userData.sp=(Math.random()-.5)*.12;
       var mm=[];
@@ -1702,7 +1706,7 @@ function boot3D(){
       o.userData.mats=mm;
       scene.add(o); props.push(o);
     }
-    var NT=small?2:3, NP=small?4:7, NC=small?3:5;
+    var NT=small?3:3, NP=small?6:7, NC=small?4:5;
     for(var i=0;i<NT;i++)place(truss(6.5),-6-i*17);
     for(var i=0;i<NP;i++)place(par(),-4-i*7.4);
     for(var i=0;i<NC;i++)place(roadcase(),-11-i*11);
@@ -1715,7 +1719,7 @@ function boot3D(){
     px.fillStyle=pg; px.fillRect(0,0,32,32);
     var N=small?110:220, pos=new Float32Array(N*3);
     for(var i=0;i<N;i++){
-      pos[i*3]=(Math.random()<.5?-1:1)*(3+Math.random()*13);
+      pos[i*3]=(Math.random()<.5?-1:1)*((small?1.4:3)+Math.random()*(small?7:13));
       pos[i*3+1]=(Math.random()-.5)*16;
       pos[i*3+2]=4-Math.random()*64;
     }
@@ -1759,7 +1763,7 @@ function boot3D(){
         o.rotation.x+=o.userData.sp*.002;
         /* o miolo da tela e do texto: prop so aparece nas margens */
         NDC.copy(o.position).project(camera);
-        var op=(NDC.z>1)?0:clamp((Math.abs(NDC.x)-.4)/.24,0,1);
+        var op=(NDC.z>1)?0:clamp((Math.abs(NDC.x)-GUARD)/SOFT,0,1);
         o.visible=op>.012;
         if(o.visible){
           var mm=o.userData.mats;

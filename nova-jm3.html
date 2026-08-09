@@ -1221,7 +1221,7 @@ function boot3D(){
     return;
   }
 
-  var PAPER=0xF6F1E5, GOLD=0xE8C25D, GOLDD=0xD4A93C, INK=0x141210;
+  var PAPER=0xF6F1E5, GOLD=0xE8C25D, GOLDD=0xD4A93C, INK=0x141210, GREEN=0x71BE45;
   var lineMat=new THREE.LineBasicMaterial({color:INK});
   var hullMat=new THREE.MeshBasicMaterial({color:INK,side:THREE.BackSide});
   var mats={};
@@ -1252,23 +1252,23 @@ function boot3D(){
 
   /* ---------- modelos ---------- */
   var BUILD={
-    /* maquininha de cartao apoiada no dock */
+    /* maquininha de cartao (tela cheia + cabeca de impressora) no dock */
     pdv:function(){
       var g=new THREE.Group();
-      g.add(part(box(1,.14,.66),INK,{y:-.57,hull:1.04}));     /* dock */
-      g.add(part(box(.5,.06,.34),GOLDD,{y:-.47}));            /* contato de carga */
-      var dev=new THREE.Group();
-      dev.add(part(box(.82,1.32,.38),PAPER,{hull:1.035}));    /* corpo */
-      dev.add(part(box(.62,.44,.04),GOLD,{y:.36,z:.19}));     /* tela */
-      for(var r=0;r<4;r++){
-        for(var c=0;c<3;c++){
-          dev.add(part(box(.15,.09,.04),INK,{x:-.2+c*.2,y:.02-r*.18,z:.19}));
-        }
+      g.add(part(box(.88,1.28,.17),GREEN,{hull:1.035}));       /* corpo */
+      g.add(part(box(.74,.84,.04),INK,{y:-.1,z:.1}));          /* tela */
+      g.add(part(box(.2,.03,.03),INK,{y:.42,z:.095}));         /* alto-falante */
+      g.add(part(cyl(.028,.028,.03,10),INK,{x:-.28,y:.42,z:.095,rx:Math.PI/2})); /* camera */
+      g.add(part(box(.7,.035,.05),INK,{y:.56,z:.09}));         /* saida do papel */
+      g.add(part(box(.88,.22,.2),GREEN,{y:.51,z:-.115}));      /* degrau traseiro */
+      g.add(part(box(.88,.16,.14),GREEN,{y:.34,z:-.085}));     /* degrau traseiro */
+      var hd=new THREE.Group();                                /* cabeca da impressora */
+      hd.add(part(box(.88,.4,.36),GREEN,{hull:1.03}));
+      for(var a=0;a<3;a++){                                    /* area de aproximacao */
+        hd.add(part(tor(.07+a*.06,.015,20,1.5),INK,{z:.19,rz:-.75}));
       }
-      dev.add(part(box(.58,.05,.26),INK,{y:.685}));           /* saida do recibo */
-      dev.add(part(box(.46,.04,.04),INK,{y:-.58,z:.19}));     /* leitor de cartao */
-      dev.position.y=.16; dev.rotation.x=-.17;
-      g.add(dev);
+      hd.position.set(0,.8,-.095);
+      g.add(hd);
       return g;
     },
     /* caixa térmica */

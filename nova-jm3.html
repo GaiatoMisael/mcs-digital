@@ -108,6 +108,15 @@ h1,h2,h3,h4{font-family:'Outfit',system-ui,sans-serif;font-weight:700;letter-spa
 .pre__fill{height:100%;width:0;border-radius:var(--pill);background:linear-gradient(90deg,var(--gold),var(--gold-2));transition:width .3s var(--ease);}
 .pre__num{font-size:.78rem;font-weight:500;color:var(--ink-3);letter-spacing:.01em;}
 
+/* ============ FUNDO 3D ============ */
+.bg3d{
+  position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;
+  opacity:0;transition:opacity 1.6s var(--ease);
+}
+.bg3d.on{opacity:.62;}
+/* conteudo sempre acima da cena */
+.topticker,.hero,.strip,.section,.finale,.footer{position:relative;z-index:1;}
+
 /* ============ PROGRESSO ============ */
 .prog{
   position:fixed;top:0;left:0;height:3px;width:100%;z-index:9600;
@@ -265,6 +274,10 @@ section[id]{scroll-margin-top:96px;}
 .rv{opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1s var(--ease);}
 .rv.in{opacity:1;transform:none;}
 .rv.d1{transition-delay:.09s;}.rv.d2{transition-delay:.18s;}.rv.d3{transition-delay:.27s;}
+.rv--l{transform:translate3d(-30px,14px,0);}
+.rv--s{transform:scale(.955) translateY(20px);}
+.rv--l.in,.rv--s.in{transform:none;}
+.par{will-change:transform;}
 
 .deck{perspective:1500px;}
 .tilt{transform-style:preserve-3d;transition:transform .6s var(--ease),box-shadow .4s var(--ease);will-change:transform;}
@@ -308,7 +321,7 @@ section[id]{scroll-margin-top:96px;}
 .opcard:hover .opcard__glow{opacity:1;}
 
 /* ============ ESTRUTURA 3D ============ */
-.estrutura{background:var(--bg-2);}
+.estrutura{background:rgba(244,240,231,.66);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
 .viewer{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(16px,2vw,26px);}
 .viewer.noweb{grid-template-columns:1fr;}
 .viewer.noweb .viewer__stage{display:none;}
@@ -519,6 +532,7 @@ section[id]{scroll-margin-top:96px;}
 </head>
 <body>
 
+<canvas class="bg3d" id="bg3d" aria-hidden="true"></canvas>
 <div class="prog" id="navProg" aria-hidden="true"></div>
 
 <!-- PRELOADER -->
@@ -585,7 +599,7 @@ section[id]{scroll-margin-top:96px;}
       </div>
     </div>
 
-    <div class="hero__stage" id="heroStage">
+    <div class="hero__stage par" id="heroStage" data-par="-.05">
       <svg class="hero__rays" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <g fill="rgba(255,255,255,.5)">
           <path d="M100 100 L120 -20 L80 -20 Z"/><path d="M100 100 L220 80 L220 120 Z"/>
@@ -621,7 +635,7 @@ section[id]{scroll-margin-top:96px;}
 <section class="section" id="operacao">
   <div class="wrap">
     <div class="sechead rv">
-      <span class="eyebrow eyebrow--plain">Operação</span>
+      <span class="eyebrow eyebrow--plain rv rv--l">Operação</span>
       <h2 class="sectitle">Cada frente da noite, coberta</h2>
       <p class="secsub">Uma equipe só, com as três frentes que fazem a noite fluir do primeiro ao último convidado.</p>
     </div>
@@ -655,13 +669,13 @@ section[id]{scroll-margin-top:96px;}
 <section class="section estrutura" id="estrutura">
   <div class="wrap">
     <div class="sechead rv">
-      <span class="eyebrow eyebrow--plain">Estrutura em 3D</span>
+      <span class="eyebrow eyebrow--plain rv rv--l">Estrutura em 3D</span>
       <h2 class="sectitle">A estrutura, peça por peça</h2>
       <p class="secsub" id="estruturaSub">Gire cada item e veja o que entra na locação. É o mesmo kit que sai do nosso galpão e chega montado no seu evento.</p>
     </div>
 
     <div class="viewer rv d1" id="viewer">
-      <div class="viewer__stage" id="viewerStage">
+      <div class="viewer__stage par" id="viewerStage" data-par="-.045">
         <canvas class="viewer__gl" id="viewerGl" aria-hidden="true"></canvas>
         <span class="viewer__tag" aria-hidden="true">Modelo 3D</span>
         <span class="viewer__hint" aria-hidden="true">Arraste para girar</span>
@@ -688,7 +702,7 @@ section[id]{scroll-margin-top:96px;}
 <section class="section" style="padding-bottom:0;">
   <div class="wrap">
     <div class="sechead rv">
-      <span class="eyebrow eyebrow--plain">Números</span>
+      <span class="eyebrow eyebrow--plain rv rv--l">Números</span>
       <h2 class="sectitle">Confiança que se constrói noite após noite</h2>
     </div>
     <div class="stats rv d1">
@@ -704,7 +718,7 @@ section[id]{scroll-margin-top:96px;}
 <section class="section" id="eventos">
   <div class="wrap">
     <div class="sechead rv">
-      <span class="eyebrow eyebrow--plain">Eventos</span>
+      <span class="eyebrow eyebrow--plain rv rv--l">Eventos</span>
       <h2 class="sectitle">A gente já esteve em campo com esses nomes</h2>
       <p class="secsub">De shows de arena a casas noturnas — uma amostra dos eventos onde a logística da Nova JM3 entrou em ação.</p>
     </div>
@@ -774,7 +788,7 @@ section[id]{scroll-margin-top:96px;}
 <section class="section" id="processo">
   <div class="wrap">
     <div class="sechead rv">
-      <span class="eyebrow eyebrow--plain">Processo</span>
+      <span class="eyebrow eyebrow--plain rv rv--l">Processo</span>
       <h2 class="sectitle">Uma noite bem operada começa muito antes dela</h2>
     </div>
     <div class="steps" id="steps">
@@ -790,7 +804,7 @@ section[id]{scroll-margin-top:96px;}
 <section class="section" style="padding-top:0;">
   <div class="wrap">
     <div class="sechead rv">
-      <span class="eyebrow eyebrow--plain">Clientes</span>
+      <span class="eyebrow eyebrow--plain rv rv--l">Clientes</span>
       <h2 class="sectitle">Quem contratou, fechou de novo</h2>
     </div>
     <div class="quotes deck">
@@ -1206,6 +1220,7 @@ function boot3D(){
   var GREENM=function(){return std('green',0x6FBC44,.06,.4);};
   var DARK  =function(){return std('dark',0x121215,.1,.28);};
   var GOLDM =function(){return std('gold',0xE0B653,.75,.3);};
+  var GRAPH =function(){return std('graph',0x7A7E84,.35,.5);};
 
   /* ambiente procedural: sem ele o metal renderiza preto */
   function envMap(renderer){
@@ -1610,7 +1625,175 @@ function boot3D(){
     setTimeout(resize,120);
     window.addEventListener('load',resize);
   })();
+
+  /* ---------- CENA 3: fundo da pagina, montagem de palco ---------- */
+  (function(){
+    var canvas=$('bg3d');
+    if(!canvas)return;
+    var small=window.innerWidth<760;
+    var renderer=makeRenderer(canvas);
+    if(!renderer){canvas.style.display='none';return;}
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,small?1.4:1.75));
+
+    var scene=new THREE.Scene();
+    /* a neblina na cor do papel dissolve os objetos ao longe */
+    scene.fog=new THREE.Fog(0xFBF9F5,12,44);
+    var camera=new THREE.PerspectiveCamera(46,1,.1,90);
+    lights(scene);
+    scene.environment=envMap(renderer);
+
+    /* --- trelica de palco --- */
+    function truss(len){
+      var g=new THREE.Group(), q=.34;
+      var ch=cyl(.05,.05,len,10), dg=cyl(.032,.032,1.18,8);
+      var c=[[-q,-q],[q,-q],[-q,q],[q,q]];
+      for(var i=0;i<4;i++)g.add(part(ch,STEEL2(),{x:c[i][0],y:c[i][1],rx:Math.PI/2}));
+      var n=Math.floor(len/1.05);
+      for(var j=0;j<n;j++){
+        var z=-len/2+.7+j*1.05, a=(j%2?1:-1)*.86;
+        g.add(part(dg,STEEL2(),{x:-q,z:z,rx:a}));
+        g.add(part(dg,STEEL2(),{x:q,z:z,rx:-a}));
+      }
+      return g;
+    }
+    /* --- refletor --- */
+    function par(){
+      var g=new THREE.Group();
+      g.add(part(cyl(.17,.21,.36,20),GRAPH(),{rx:Math.PI/2}));
+      g.add(part(tor(.2,.022,26),STEEL2()));
+      g.add(part(cyl(.15,.15,.02,20),GOLDM(),{z:.17,rx:Math.PI/2}));
+      g.add(part(box(.09,.2,.06,.02),GRAPH(),{y:.26}));
+      return g;
+    }
+    /* --- case de equipamento --- */
+    function roadcase(){
+      var g=new THREE.Group();
+      g.add(part(box(1.15,.72,.72,.06),GRAPH()));
+      g.add(part(box(1.2,.06,.78,.03),STEEL2(),{y:.36}));
+      g.add(part(box(1.2,.06,.78,.03),STEEL2(),{y:-.36}));
+      g.add(part(box(.16,.1,.05,.02),GOLDM(),{y:.06,z:.38}));
+      return g;
+    }
+
+    var props=[];
+    function place(o,z){
+      /* mantem o miolo livre: o texto da pagina passa por ali */
+      var side=Math.random()<.5?-1:1;
+      o.position.set(side*(7+Math.random()*7),(Math.random()-.5)*6.5,z);
+      o.rotation.set((Math.random()-.5)*.5,Math.random()*Math.PI,(Math.random()-.5)*.4);
+      o.userData.sp=(Math.random()-.5)*.12;
+      var mm=[];
+      o.traverse(function(n){
+        if(n.isMesh){n.material=n.material.clone();n.material.transparent=true;n.material.opacity=0;mm.push(n.material);}
+      });
+      o.userData.mats=mm;
+      scene.add(o); props.push(o);
+    }
+    var NT=small?2:3, NP=small?4:7, NC=small?3:5;
+    for(var i=0;i<NT;i++)place(truss(6.5),-6-i*17);
+    for(var i=0;i<NP;i++)place(par(),-4-i*7.4);
+    for(var i=0;i<NC;i++)place(roadcase(),-11-i*11);
+
+    /* --- confete/poeira de palco --- */
+    var pc=document.createElement('canvas'); pc.width=pc.height=32;
+    var px=pc.getContext('2d');
+    var pg=px.createRadialGradient(16,16,0,16,16,16);
+    pg.addColorStop(0,'rgba(210,166,58,.95)'); pg.addColorStop(1,'rgba(210,166,58,0)');
+    px.fillStyle=pg; px.fillRect(0,0,32,32);
+    var N=small?110:220, pos=new Float32Array(N*3);
+    for(var i=0;i<N;i++){
+      pos[i*3]=(Math.random()<.5?-1:1)*(3+Math.random()*13);
+      pos[i*3+1]=(Math.random()-.5)*16;
+      pos[i*3+2]=4-Math.random()*64;
+    }
+    var pgeo=new THREE.BufferGeometry();
+    pgeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    var dots=new THREE.Points(pgeo,new THREE.PointsMaterial({
+      size:.13,map:new THREE.CanvasTexture(pc),transparent:true,opacity:.75,
+      depthWrite:false,sizeAttenuation:true
+    }));
+    scene.add(dots);
+
+    function resize(){
+      var w=window.innerWidth,h=window.innerHeight;
+      renderer.setSize(w,h,false);
+      camera.aspect=w/h; camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize',resize); resize();
+
+    var NDC=new THREE.Vector3();
+    var mx=0,my=0,cx=0,cy=0,sp=0,t0=performance.now(),hidden=false;
+    document.addEventListener('visibilitychange',function(){hidden=document.hidden;});
+    if(fine){
+      window.addEventListener('mousemove',function(e){
+        mx=e.clientX/window.innerWidth-.5; my=e.clientY/window.innerHeight-.5;
+      },{passive:true});
+    }
+    function docH(){return Math.max(1,document.documentElement.scrollHeight-window.innerHeight);}
+
+    function frame(){
+      requestAnimationFrame(frame);
+      if(hidden)return;
+      var t=(performance.now()-t0)/1000;
+      sp=lerp(sp,clamp((window.pageYOffset||0)/docH(),0,1),.07);
+      cx=lerp(cx,mx*1.6,.05); cy=lerp(cy,-my*1.1,.05);
+      /* travelling pelo galpao conforme a pagina rola */
+      camera.position.set(cx+Math.sin(sp*Math.PI*1.6)*.7, cy-sp*1.6, 8-sp*62);
+      camera.lookAt(cx*.4,cy*.4-sp*1.6,camera.position.z-10);
+      for(var i=0;i<props.length;i++){
+        var o=props[i];
+        o.rotation.y+=o.userData.sp*.004;
+        o.rotation.x+=o.userData.sp*.002;
+        /* o miolo da tela e do texto: prop so aparece nas margens */
+        NDC.copy(o.position).project(camera);
+        var op=(NDC.z>1)?0:clamp((Math.abs(NDC.x)-.4)/.24,0,1);
+        o.visible=op>.012;
+        if(o.visible){
+          var mm=o.userData.mats;
+          for(var k=0;k<mm.length;k++)mm[k].opacity=op;
+        }
+      }
+      dots.rotation.y=t*.012;
+      renderer.render(scene,camera);
+    }
+    requestAnimationFrame(frame);
+    setTimeout(function(){canvas.classList.add('on');resize();},220);
+  })();
 }
+
+/* ══════════════════════════════════════════════
+   6. PARALLAX NO SCROLL
+   ══════════════════════════════════════════════ */
+try{
+  if(!reduce){
+    var pars=document.querySelectorAll('[data-par]');
+    if(pars.length){
+      var items=[],pi;
+      for(pi=0;pi<pars.length;pi++){
+        items.push({el:pars[pi],k:parseFloat(pars[pi].getAttribute('data-par'))||0,y:0});
+      }
+      var ptick=false;
+      function pupd(){
+        ptick=false;
+        var vh=window.innerHeight,moving=false;
+        for(var i=0;i<items.length;i++){
+          var it=items[i], r=it.el.getBoundingClientRect();
+          if(r.bottom<-240||r.top>vh+240)continue;
+          var c=(r.top+r.height/2-vh/2)/vh;
+          var to=c*it.k*170;
+          it.y=lerp(it.y,to,.16);
+          it.el.style.transform='translate3d(0,'+it.y.toFixed(2)+'px,0)';
+          if(Math.abs(to-it.y)>.4)moving=true;
+        }
+        if(moving)pq();
+      }
+      function pq(){if(!ptick){ptick=true;requestAnimationFrame(pupd);}}
+      window.addEventListener('scroll',pq,{passive:true});
+      window.addEventListener('resize',pq);
+      pq();
+    }
+  }
+}catch(err){if(window.console&&console.warn){console.warn('jm3/par:',err);}}
 
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',function(){try{boot3D();}catch(e){if(window.console&&console.warn){console.warn('jm3/3d:',e);}}});

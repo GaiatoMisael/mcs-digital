@@ -1,0 +1,202 @@
+<meta charset="utf-8">
+<title>PagoTop — Flyer</title>
+<style>
+/*__FONTS__*/
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#111}
+body{display:flex;align-items:center;justify-content:center}
+
+.stage{
+  position:relative;width:1080px;height:1080px;overflow:hidden;
+  background:#d7d7d7;
+  font-family:'Montserrat',sans-serif;
+  isolation:isolate;
+}
+
+/* ---------- FUNDO ---------- */
+.bg-base{position:absolute;inset:0;background:
+  radial-gradient(120% 90% at 50% 18%, #f2f2f2 0%, #dcdcdc 52%, #bdbdbd 100%);}
+
+/* letras fantasma vermelhas */
+.ghost{position:absolute;inset:-8%;overflow:hidden}
+.ghost span{
+  position:absolute;font-family:'Anton',sans-serif;color:#e01b22;
+  line-height:.78;letter-spacing:-.02em;
+}
+.g1{font-size:470px;left:-70px;top:20px;opacity:.80}
+.g2{font-size:470px;left:330px;top:-60px;opacity:.58}
+.g3{font-size:470px;left:730px;top:40px;opacity:.72}
+.g4{font-size:520px;left:-40px;top:520px;opacity:.66}
+.g5{font-size:520px;left:420px;top:600px;opacity:.50}
+.g6{font-size:520px;left:820px;top:540px;opacity:.64}
+
+/* textura de meio-tom + granulado */
+.halftone{position:absolute;inset:0;opacity:.11;mix-blend-mode:multiply;
+  background-image:radial-gradient(#5b5b5b 1.1px, transparent 1.2px);
+  background-size:7px 7px;}
+.grain{position:absolute;inset:0;opacity:.10;mix-blend-mode:overlay;
+  background-image:repeating-linear-gradient(48deg,#fff 0 2px,#000 2px 4px);}
+
+/* faixa de ondas superior */
+.waves{position:absolute;top:0;left:0;width:1080px;height:172px}
+.waves-bottom{position:absolute;bottom:0;left:0;width:1080px;height:118px;transform:scaleY(-1)}
+
+/* clarão atrás do espaço do artista */
+.spot{position:absolute;left:300px;top:70px;width:760px;height:620px;
+  background:radial-gradient(closest-side, rgba(255,255,255,.60), rgba(255,255,255,0) 72%);}
+
+/* ---------- SELO DE DATA ---------- */
+.date{
+  position:absolute;left:56px;top:212px;width:308px;height:308px;border-radius:50%;
+  background:radial-gradient(120% 120% at 30% 20%,#242424 0%,#0b0b0b 60%);
+  box-shadow:0 22px 46px rgba(0,0,0,.38), 0 0 0 7px rgba(255,255,255,.92), 0 0 0 11px rgba(0,0,0,.12);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transform:rotate(-3deg);
+}
+.slashes{display:flex;gap:7px;margin-bottom:12px}
+.slashes i{display:block;width:6px;height:22px;background:#ff2a20;transform:skewX(-22deg);border-radius:1px}
+.date .dow{font-family:'Bebas Neue',sans-serif;font-size:47px;color:#fff;letter-spacing:.10em;line-height:1}
+.date .big{display:flex;align-items:flex-end;gap:9px;margin:2px 0 4px}
+.date .big b{font-family:'Anton',sans-serif;font-size:96px;color:#ff2a20;line-height:.86;letter-spacing:-.01em}
+.date .big em{font-family:'Bebas Neue',sans-serif;font-style:normal;font-size:44px;color:#fff;letter-spacing:.06em;padding-bottom:9px}
+.date .hour{font-family:'Bebas Neue',sans-serif;font-size:36px;color:#fff;letter-spacing:.16em;line-height:1}
+.date .hour s{text-decoration:none;color:#ff2a20}
+
+/* ---------- ESPAÇO DO ARTISTA ---------- */
+.slot{position:absolute;left:344px;top:96px;width:688px;height:556px}
+.slot img{width:100%;height:100%;object-fit:contain;object-position:bottom center;
+  filter:drop-shadow(0 26px 34px rgba(0,0,0,.34))}
+.guide{display:none}
+body.show-guide .guide{
+  display:flex;position:absolute;inset:0;align-items:center;justify-content:center;
+  border:5px dashed rgba(11,11,11,.55);border-radius:14px;background:rgba(255,255,255,.30);
+  font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:.14em;color:rgba(11,11,11,.62);
+  text-align:center;line-height:1.25;padding:24px;
+}
+
+/* ---------- MARCA ---------- */
+.mark{position:absolute;left:0;top:588px;width:1080px;height:352px}
+
+/* ---------- TARJA / TAGLINE ---------- */
+.tag{
+  position:absolute;left:56px;top:508px;transform:rotate(-3deg);
+  background:#0b0b0b;color:#fff;font-family:'Bebas Neue',sans-serif;
+  font-size:33px;letter-spacing:.28em;padding:12px 26px 9px;
+  box-shadow:0 10px 22px rgba(0,0,0,.28), 0 0 0 5px #fff;
+}
+.tag u{text-decoration:none;color:#ff2a20}
+
+/* ---------- LOCAL ---------- */
+.venue{
+  position:absolute;left:96px;bottom:48px;width:888px;height:88px;background:#fff;
+  box-shadow:0 14px 30px rgba(0,0,0,.30), 0 0 0 5px #0b0b0b;
+  display:flex;align-items:center;justify-content:center;gap:20px;
+}
+.venue span{font-family:'Anton',sans-serif;font-size:41px;letter-spacing:.13em;color:#0b0b0b;
+  padding-top:4px;white-space:nowrap}
+.venue b{font-family:'Anton',sans-serif;font-size:27px;letter-spacing:.06em;color:#fff;background:#e01b22;
+  padding:8px 12px 5px;border-radius:3px}
+</style>
+
+<div class="stage">
+  <div class="bg-base"></div>
+
+  <div class="ghost">
+    <span class="g1">P</span><span class="g2">G</span><span class="g3">O</span>
+    <span class="g4">T</span><span class="g5">O</span><span class="g6">P</span>
+  </div>
+
+  <div class="halftone"></div>
+  <div class="grain"></div>
+  <div class="spot"></div>
+
+  <!-- ondas -->
+  <svg class="waves" viewBox="0 0 1080 172" preserveAspectRatio="none">
+    <defs>
+      <pattern id="wv" width="62" height="172" patternUnits="userSpaceOnUse">
+        <path d="M31,-16 C 63,16 -1,50 31,84 C 63,118 -1,152 31,190"
+              fill="none" stroke="#0b0b0b" stroke-width="27" stroke-linecap="round"/>
+      </pattern>
+    </defs>
+    <rect width="1080" height="172" fill="url(#wv)"/>
+  </svg>
+  <svg class="waves-bottom" viewBox="0 0 1080 118" preserveAspectRatio="none">
+    <rect width="1080" height="118" fill="url(#wv)"/>
+  </svg>
+
+  <!-- selo de data -->
+  <div class="date">
+    <div class="slashes"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="dow">DOMINGO</div>
+    <div class="big"><b>16</b><em>AGO</em></div>
+    <div class="hour">ÀS <s>20H00</s></div>
+  </div>
+
+  <!-- espaço reservado para o artista -->
+  <div class="slot">
+    <div class="guide">ESPAÇO<br>DO ARTISTA</div>
+  </div>
+
+  <div class="tag">PAGODE <u>&bull;</u> SAMBA <u>&bull;</u> RESENHA</div>
+
+  <!-- marca PagoTop em cromado -->
+  <svg class="mark" viewBox="0 0 1080 352">
+    <defs>
+      <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#f7fbff"/>
+        <stop offset="14%"  stop-color="#9aa6b6"/>
+        <stop offset="30%"  stop-color="#4c5563"/>
+        <stop offset="46%"  stop-color="#e8eef6"/>
+        <stop offset="52%"  stop-color="#ffffff"/>
+        <stop offset="60%"  stop-color="#b9c3cf"/>
+        <stop offset="74%"  stop-color="#5d6674"/>
+        <stop offset="88%"  stop-color="#d5dde6"/>
+        <stop offset="100%" stop-color="#8d97a4"/>
+      </linearGradient>
+      <linearGradient id="chrome2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#ffffff"/>
+        <stop offset="26%"  stop-color="#8f99a8"/>
+        <stop offset="48%"  stop-color="#ffffff"/>
+        <stop offset="66%"  stop-color="#69727f"/>
+        <stop offset="100%" stop-color="#cdd5de"/>
+      </linearGradient>
+      <path id="arc" d="M 120,244 Q 540,152 960,244"/>
+      <filter id="ds" x="-25%" y="-25%" width="150%" height="160%">
+        <feDropShadow dx="0" dy="15" stdDeviation="11" flood-color="#000" flood-opacity=".45"/>
+      </filter>
+    </defs>
+
+    <!-- contorno adesivo (branco + preto), mesclado como no estilo original -->
+    <g filter="url(#ds)" font-family="Anton" font-size="196" letter-spacing="16"
+       text-anchor="middle" paint-order="stroke" stroke-linejoin="round">
+      <text stroke="#ffffff" stroke-width="52" fill="#ffffff">
+        <textPath href="#arc" startOffset="50%">PAGO</textPath></text>
+      <text stroke="#0b0b0b" stroke-width="30" fill="#0b0b0b">
+        <textPath href="#arc" startOffset="50%">PAGO</textPath></text>
+    </g>
+    <!-- letras internas em cromado -->
+    <g font-family="Anton" font-size="196" letter-spacing="16"
+       text-anchor="middle" paint-order="stroke" stroke-linejoin="round">
+      <text stroke="#e01b22" stroke-width="9" fill="#e01b22">
+        <textPath href="#arc" startOffset="50%">PAGO</textPath></text>
+      <text stroke="#2b3038" stroke-width="3" fill="url(#chrome)">
+        <textPath href="#arc" startOffset="50%">PAGO</textPath></text>
+    </g>
+
+    <g transform="translate(788,318) rotate(-8)" font-family="Anton"
+       font-size="128" letter-spacing="8" text-anchor="middle"
+       paint-order="stroke" stroke-linejoin="round">
+      <g filter="url(#ds)">
+        <text stroke="#ffffff" stroke-width="38" fill="#ffffff">TOP</text>
+        <text stroke="#0b0b0b" stroke-width="22" fill="#0b0b0b">TOP</text>
+      </g>
+      <text stroke="#2b3038" stroke-width="3" fill="url(#chrome2)">TOP</text>
+    </g>
+  </svg>
+
+  <!-- local -->
+  <div class="venue">
+    <span>ROSÁRIO DE SARACURUNA</span><b>RJ</b>
+  </div>
+</div>

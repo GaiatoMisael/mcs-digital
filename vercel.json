@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/clips-studio", "destination": "/clips-studio/index.html" },
+    { "source": "/clips-studio/termos", "destination": "/clips-studio/termos/index.html" },
+    { "source": "/clips-studio/privacidade", "destination": "/clips-studio/privacidade/index.html" }
+  ]
+}
